@@ -1,34 +1,206 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eFootball Premier League</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f4f4;
+  margin:0;
+}
+
+header {
+  background: linear-gradient(90deg,#37003c,#8a005c);
+  color:#fff;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.container {
+  padding:15px;
+}
+
+h2 {
+  margin-top:20px;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+th {
+  background:#37003c;
+  color:#fff;
+  padding:10px;
+  font-size:14px;
+}
+
+td {
+  padding:10px;
+  border-bottom:1px solid #eee;
+  text-align:center;
+}
+
+.team {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.team img {
+  width:26px;
+  height:26px;
+  object-fit:contain;
+}
+
+.match {
+  background:#fff;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.match img {
+  width:24px;
+  height:24px;
+}
+
+input {
+  width:40px;
+  text-align:center;
+  padding:4px;
+}
+
+button {
+  background:#00c853;
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.reset {
+  background:#d50000;
+  margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🏆 eFootball Premier League</header>
+
+<div class="container">
+
+<button class="reset" onclick="resetLeague()">รีเซ็ตฤดูกาล</button>
+
+<h2>📊 ตารางคะแนน</h2>
+<table>
+<thead>
+<tr>
+<th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<h2>⚽ กรอกผลการแข่งขัน</h2>
+<div id="fixtures"></div>
+
+</div>
+
 <script>
 const teams = [
-  {
-    name: "Real Madrid",
-    logo: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
-    p:0,w:0,d:0,l:0,pts:0
-  },
-  {
-    name: "Manchester United",
-    logo: "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
-    p:0,w:0,d:0,l:0,pts:0
-  },
-  {
-    name: "Marseille",
-    logo: "https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg",
-    p:0,w:0,d:0,l:0,pts:0
-  },
-  {
-    name: "Atletico Madrid",
-    logo: "https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg",
-    p:0,w:0,d:0,l:0,pts:0
-  },
-  {
-    name: "AC Milan",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg",
-    p:0,w:0,d:0,l:0,pts:0
-  },
-  {
-    name: "Paris Saint-Germain",
-    logo: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg",
-    p:0,w:0,d:0,l:0,pts:0
-  }
+ {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
+ {name:"Manchester United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
+ {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg"},
+ {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
+ {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
+ {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
+
+teams.forEach(t=>{
+  t.p=t.w=t.d=t.l=t.gf=t.ga=t.pts=0;
+});
+
+function renderTable(){
+  const body=document.getElementById("tableBody");
+  body.innerHTML="";
+  teams.sort((a,b)=>b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga));
+  teams.forEach((t,i)=>{
+    body.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td class="team"><img src="${t.logo}">${t.name}</td>
+      <td>${t.p}</td>
+      <td>${t.w}</td>
+      <td>${t.d}</td>
+      <td>${t.l}</td>
+      <td>${t.gf}</td>
+      <td>${t.ga}</td>
+      <td>${t.gf-t.ga}</td>
+      <td><b>${t.pts}</b></td>
+    </tr>`;
+  });
+}
+
+function createFixtures(){
+  const f=document.getElementById("fixtures");
+  for(let i=0;i<teams.length;i++){
+    for(let j=i+1;j<teams.length;j++){
+      f.innerHTML+=`
+      <div class="match">
+        <span class="team"><img src="${teams[i].logo}">${teams[i].name}</span>
+        <input id="a${i}${j}"> -
+        <input id="b${i}${j}">
+        <span class="team"><img src="${teams[j].logo}">${teams[j].name}</span>
+        <button onclick="saveMatch(${i},${j})">บันทึก</button>
+      </div>`;
+    }
+  }
+}
+
+function saveMatch(i,j){
+  const a=parseInt(document.getElementById(`a${i}${j}`).value);
+  const b=parseInt(document.getElementById(`b${i}${j}`).value);
+  if(isNaN(a)||isNaN(b))return;
+
+  const A=teams[i],B=teams[j];
+  A.p++;B.p++;
+  A.gf+=a;A.ga+=b;
+  B.gf+=b;B.ga+=a;
+
+  if(a>b){A.w++;A.pts+=3;B.l++;}
+  else if(b>a){B.w++;B.pts+=3;A.l++;}
+  else{A.d++;B.d++;A.pts++;B.pts++;}
+
+  renderTable();
+}
+
+function resetLeague(){
+  teams.forEach(t=>{
+    t.p=t.w=t.d=t.l=t.gf=t.ga=t.pts=0;
+  });
+  renderTable();
+}
+
+renderTable();
+createFixtures();
 </script>
+
+</body>
+</html>
