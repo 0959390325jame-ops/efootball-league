@@ -6,129 +6,94 @@
 <title>eFootball League</title>
 
 <style>
-:root{
-  --pl-purple:#37003c;
-  --pl-green:#00ff87;
-  --bg:#f2f2f2;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
 }
 
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:var(--bg);
+header {
+  background: linear-gradient(90deg,#5a0d7c,#8e2de2);
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  font-size: 22px;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:linear-gradient(90deg,#37003c,#6f1d7a);
-  color:#fff;
-  text-align:center;
-  padding:14px;
-  font-size:22px;
-  font-weight:bold;
+nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid #ddd;
 }
 
-/* ===== NAV ===== */
-nav{
-  display:flex;
-  background:#fff;
-}
-nav button{
-  flex:1;
-  padding:12px;
-  font-size:16px;
-  border:none;
-  background:none;
-}
-nav button.active{
-  color:var(--pl-purple);
-  border-bottom:3px solid var(--pl-purple);
+nav button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  font-size: 16px;
 }
 
-/* ===== PAGE ===== */
-.page{ display:none; padding:10px; }
-.page.active{ display:block; }
-
-/* ===== MATCH CARD ===== */
-.match{
-  background:#fff;
-  border-radius:12px;
-  padding:10px;
-  margin-bottom:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.team{
-  width:40%;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.team img{
-  width:32px;height:32px;
-}
-.score{
-  width:20%;
-  display:flex;
-  gap:4px;
-}
-.score input{
-  width:40px;
-  text-align:center;
-  font-size:16px;
-}
-.save-btn{
-  background:#00c853;
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
+nav button.active {
+  border-bottom: 4px solid purple;
+  color: purple;
+  font-weight: bold;
 }
 
-/* ===== TABLE ===== */
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  font-size:14px;
+.page {
+  display: none;
+  padding: 10px;
 }
-th{
-  background:var(--pl-purple);
-  color:#fff;
-  padding:6px;
-}
-td{
-  padding:6px;
-  text-align:center;
-  border-bottom:1px solid #eee;
-}
-.champ{ background:#d9fbe5; }
-.releg{ background:#ffd6d6; }
 
-/* ===== FORM ===== */
-.form span{
-  display:inline-block;
-  width:18px;height:18px;
-  border-radius:50%;
-  margin:1px;
-  font-size:11px;
-  color:#fff;
-  line-height:18px;
+.page.active {
+  display: block;
 }
-.W{background:#00c853}
-.D{background:#ffab00}
-.L{background:#d50000}
 
-/* ===== BUTTON ===== */
-.reset{
-  margin-top:10px;
-  background:#d32f2f;
-  color:#fff;
-  border:none;
-  padding:10px;
-  border-radius:10px;
-  width:100%;
+.match {
+  background: #fff;
+  padding: 8px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.match input {
+  width: 40px;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 6px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.champ {
+  background: #c6f6d5;
+}
+
+.relegate {
+  background: #fed7d7;
+}
+
+.reset {
+  background: red;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -143,152 +108,162 @@ td{
   <button onclick="showPage('scorer')">Top Scorer</button>
 </nav>
 
-<!-- ================= PROGRAM ================= -->
-<section id="program" class="page active">
-
-<div class="match">
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg">
-    Real Madrid
-  </div>
-  <div class="score">
-    <input id="h0"><span>-</span><input id="a0">
-  </div>
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg">
-    Man United
-  </div>
-  <button class="save-btn" onclick="saveMatch(0)">บันทึก</button>
+<div class="page active" id="program">
+  <button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
+  <div id="programList"></div>
 </div>
 
-<div class="match">
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/6/6b/Olympique_Marseille_logo.svg">
-    Marseille
-  </div>
-  <div class="score">
-    <input id="h1"><span>-</span><input id="a1">
-  </div>
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg">
-    Atletico
-  </div>
-  <button class="save-btn" onclick="saveMatch(1)">บันทึก</button>
+<div class="page" id="table">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
+        <th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
 </div>
 
-<div class="match">
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/0/0c/AC_Milan.svg">
-    AC Milan
-  </div>
-  <div class="score">
-    <input id="h2"><span>-</span><input id="a2">
-  </div>
-  <div class="team">
-    <img src="https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg">
-    PSG
-  </div>
-  <button class="save-btn" onclick="saveMatch(2)">บันทึก</button>
+<div class="page" id="scorer">
+  <table>
+    <thead>
+      <tr><th>อันดับ</th><th>ทีม</th><th>ประตู</th></tr>
+    </thead>
+    <tbody id="scorerBody"></tbody>
+  </table>
 </div>
-
-<button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
-</section>
-
-<!-- ================= TABLE ================= -->
-<section id="table" class="page">
-<table>
-<thead>
-<tr>
-<th>#</th><th>ทีม</th><th>P</th><th>GD</th><th>Pts</th><th>ฟอร์ม 5 นัด</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</section>
-
-<!-- ================= SCORER ================= -->
-<section id="scorer" class="page">
-<h3>Top Scorer</h3>
-<p>⚽ คุณสามารถใส่รายชื่อเองภายหลัง</p>
-<ul>
-<li>-</li>
-<li>-</li>
-<li>-</li>
-</ul>
-</section>
 
 <script>
-const teams=[
-"Real Madrid","Man United","Marseille",
-"Atletico","AC Milan","PSG"
+const teams = [
+  "Man City",
+  "Arsenal",
+  "Liverpool",
+  "Chelsea",
+  "Man United",
+  "Tottenham"
 ];
 
-let table=JSON.parse(localStorage.getItem("table"))||teams.map(t=>({
-team:t,P:0,GF:0,GA:0,PTS:0,form:[]
-}));
+function generateMatches() {
+  let matches = [];
+  let day = 1;
 
-function showPage(p){
-document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
-document.querySelectorAll("nav button").forEach(e=>e.classList.remove("active"));
-document.getElementById(p).classList.add("active");
-event.target.classList.add("active");
-if(p==="table") renderTable();
+  for (let r = 0; r < 3; r++) {
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        matches.push({
+          day,
+          home: teams[i],
+          away: teams[j],
+          hs: "",
+          as: ""
+        });
+        if (matches.filter(m => m.day === day).length === 6) day++;
+      }
+    }
+  }
+  return matches;
 }
 
-function saveMatch(i){
-const h=document.getElementById("h"+i).value;
-const a=document.getElementById("a"+i).value;
-if(h===""||a==="")return;
+let matches = JSON.parse(localStorage.getItem("matches")) || generateMatches();
+localStorage.setItem("matches", JSON.stringify(matches));
 
-const pair=[
-["Real Madrid","Man United"],
-["Marseille","Atletico"],
-["AC Milan","PSG"]
-][i];
+function renderProgram() {
+  const box = document.getElementById("programList");
+  box.innerHTML = "";
+  let currentDay = 0;
 
-update(pair[0],pair[1],+h,+a);
-localStorage.setItem("table",JSON.stringify(table));
-alert("บันทึกแล้ว");
+  matches.forEach((m, i) => {
+    if (m.day !== currentDay) {
+      currentDay = m.day;
+      box.innerHTML += `<h3>Day ${currentDay}</h3>`;
+    }
+
+    box.innerHTML += `
+      <div class="match">
+        ${m.home}
+        <input value="${m.hs}" onchange="updateScore(${i},this.value,true)">
+        -
+        <input value="${m.as}" onchange="updateScore(${i},this.value,false)">
+        ${m.away}
+      </div>`;
+  });
 }
 
-function update(t1,t2,g1,g2){
-let A=table.find(t=>t.team===t1);
-let B=table.find(t=>t.team===t2);
-A.P++;B.P++;
-A.GF+=g1;A.GA+=g2;
-B.GF+=g2;B.GA+=g1;
-
-if(g1>g2){A.PTS+=3;A.form.unshift("W");B.form.unshift("L")}
-else if(g1<g2){B.PTS+=3;B.form.unshift("W");A.form.unshift("L")}
-else{A.PTS++;B.PTS++;A.form.unshift("D");B.form.unshift("D")}
-
-A.form=A.form.slice(0,5);
-B.form=B.form.slice(0,5);
+function updateScore(i,val,isHome) {
+  if (isHome) matches[i].hs = val;
+  else matches[i].as = val;
+  localStorage.setItem("matches", JSON.stringify(matches));
+  renderTable();
+  renderScorer();
 }
 
-function renderTable(){
-let body=document.getElementById("tableBody");
-body.innerHTML="";
-table.sort((a,b)=>b.PTS-a.PTS||((b.GF-b.GA)-(a.GF-a.GA)));
-table.forEach((t,i)=>{
-body.innerHTML+=`
-<tr class="${i==0?'champ':i>=4?'releg':''}">
-<td>${i+1}</td>
-<td>${t.team}</td>
-<td>${t.P}</td>
-<td>${t.GF-t.GA}</td>
-<td>${t.PTS}</td>
-<td class="form">${t.form.map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
-</tr>`;
-});
+function renderTable() {
+  let stats = {};
+  teams.forEach(t => stats[t]={P:0,W:0,D:0,L:0,GF:0,GA:0,PTS:0});
+
+  matches.forEach(m=>{
+    if(m.hs===""||m.as==="") return;
+    let h=+m.hs,a=+m.as;
+    stats[m.home].P++;
+    stats[m.away].P++;
+    stats[m.home].GF+=h; stats[m.home].GA+=a;
+    stats[m.away].GF+=a; stats[m.away].GA+=h;
+
+    if(h>a){stats[m.home].W++;stats[m.home].PTS+=3;stats[m.away].L++;}
+    else if(h<a){stats[m.away].W++;stats[m.away].PTS+=3;stats[m.home].L++;}
+    else{stats[m.home].D++;stats[m.away].D++;stats[m.home].PTS++;stats[m.away].PTS++;}
+  });
+
+  let arr = Object.entries(stats).sort((a,b)=>b[1].PTS-a[1].PTS||((b[1].GF-b[1].GA)-(a[1].GF-a[1].GA)));
+  let body = document.getElementById("tableBody");
+  body.innerHTML = "";
+
+  arr.forEach((t,i)=>{
+    body.innerHTML += `
+    <tr class="${i==0?'champ':i>=4?'relegate':''}">
+      <td>${i+1}</td><td>${t[0]}</td>
+      <td>${t[1].P}</td><td>${t[1].W}</td><td>${t[1].D}</td><td>${t[1].L}</td>
+      <td>${t[1].GF}</td><td>${t[1].GA}</td>
+      <td>${t[1].GF-t[1].GA}</td><td>${t[1].PTS}</td>
+    </tr>`;
+  });
 }
 
-function resetAll(){
-if(confirm("ล้างข้อมูลทั้งหมด?")){
-localStorage.clear();
-location.reload();
+function renderScorer() {
+  let goals = {};
+  teams.forEach(t=>goals[t]=0);
+  matches.forEach(m=>{
+    if(m.hs!==""&&m.as!==""){
+      goals[m.home]+=+m.hs;
+      goals[m.away]+=+m.as;
+    }
+  });
+  let arr = Object.entries(goals).sort((a,b)=>b[1]-a[1]);
+  let body = document.getElementById("scorerBody");
+  body.innerHTML = "";
+  arr.forEach((t,i)=>{
+    body.innerHTML += `<tr><td>${i+1}</td><td>${t[0]}</td><td>${t[1]}</td></tr>`;
+  });
 }
+
+function showPage(p) {
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  event.target.classList.add("active");
 }
+
+function resetAll() {
+  if(confirm("รีเซ็ตข้อมูลทั้งหมด?")){
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+renderProgram();
+renderTable();
+renderScorer();
 </script>
 
 </body>
