@@ -2,233 +2,155 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>eFootball Premier League</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eFootball League</title>
 
 <style>
-:root{
- --purple:#37003c;
- --green:#00ff85;
-}
-body{margin:0;font-family:Arial;background:#f4f4f4}
-header{background:var(--purple);color:#fff;padding:18px;text-align:center;font-size:24px;font-weight:bold}
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:linear-gradient(90deg,#37003c,#6a1b9a);color:#fff;padding:14px;text-align:center;font-size:22px}
 nav{display:flex;background:#fff}
-nav button{flex:1;padding:14px;border:none;background:#fff;font-size:16px;font-weight:bold}
-nav button.active{border-bottom:4px solid var(--green);color:var(--purple)}
-section{display:none;padding:12px}
-section.active{display:block}
+nav button{flex:1;padding:12px;border:none;background:none;font-size:15px}
+nav button.active{color:#6a1b9a;border-bottom:3px solid #6a1b9a;font-weight:bold}
 
-button.main{background:var(--purple);color:#fff;border:none;border-radius:6px;padding:8px 14px}
-button.reset{background:#dc3545;color:#fff;border:none;border-radius:6px;padding:8px 14px}
+.page{display:none;padding:10px}
+.page.active{display:block}
 
-/* ตาราง */
-table{width:100%;border-collapse:collapse;background:#fff;font-size:16px}
-th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
+.controls{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+
+.match{background:#fff;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.team{display:flex;align-items:center;width:40%}
+.team img{width:26px;margin-right:6px}
+.score input{width:36px;font-size:18px;text-align:center}
+
+button.save{background:#2e7d32;color:#fff;padding:10px;border:none;border-radius:8px}
+button.reset{background:#c62828;color:#fff;padding:10px;border:none;border-radius:8px}
+
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:6px;border-bottom:1px solid #ddd;text-align:center}
 th{background:#eee}
-.leader{background:#d4edda}
-.relegation{background:#f8d7da}
-
-/* โปรแกรม */
-.match{background:#fff;margin:10px 0;padding:12px;border-radius:10px;display:flex;align-items:center;justify-content:space-between}
-.team{width:40%;display:flex;align-items:center}
-.team img{height:26px;margin-right:6px}
-.score input{width:42px;font-size:18px;text-align:center}
-
-/* ฟอร์ม */
-.form span{padding:3px 6px;border-radius:4px;color:#fff;margin:1px;font-size:12px}
-.W{background:#28a745}
-.D{background:#6c757d}
-.L{background:#dc3545}
+.form span{padding:2px 5px;border-radius:4px;color:#fff;font-size:11px}
+.W{background:#2e7d32}
+.D{background:#f9a825}
+.L{background:#c62828}
 </style>
 </head>
 
 <body>
 
-<header>🏆 eFootball Premier League</header>
+<header>🏆 eFootball League</header>
 
 <nav>
-<button class="active" onclick="show('program')">โปรแกรม</button>
-<button onclick="show('table')">ตาราง</button>
-<button onclick="show('scorer')">Top Scorer</button>
+ <button class="active" onclick="showPage('program')">โปรแกรม</button>
+ <button onclick="showPage('table')">ตาราง</button>
 </nav>
 
-<section id="program" class="active">
-<div style="display:flex;justify-content:space-between;margin-bottom:10px">
-<button class="main" onclick="prev()">◀ ก่อนหน้า</button>
-<b id="pageTitle"></b>
-<button class="main" onclick="next()">ถัดไป ▶</button>
-</div>
-<div id="matches"></div>
-<button class="reset" onclick="resetAll()" style="width:100%">รีเซ็ตทั้งหมด</button>
+<section id="program" class="page active">
+ <div class="controls">
+  <button onclick="prevPage()">◀</button>
+  <span id="pageText"></span>
+  <button onclick="nextPage()">▶</button>
+ </div>
+
+ <div id="matches"></div>
+
+ <div class="controls">
+  <button class="save" onclick="saveData()">💾 บันทึก</button>
+  <button class="reset" onclick="resetData()">🔄 รีเซ็ต</button>
+ </div>
 </section>
 
-<section id="table">
-<table>
-<thead>
-<tr>
-<th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
-<th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>ฟอร์ม</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</section>
-
-<section id="scorer">
-<table>
-<thead><tr><th>#</th><th>ผู้เล่น</th><th>ทีม</th><th>ประตู</th></tr></thead>
-<tbody id="scorerBody"></tbody>
-</table>
-<button class="main" onclick="addScorer()" style="width:100%;margin-top:10px">เพิ่มผู้เล่น</button>
+<section id="table" class="page">
+ <h3>ตารางคะแนน</h3>
+ <table id="leagueTable"></table>
 </section>
 
 <script>
 const teams=[
-"Real Madrid","Manchester United","Olympique de Marseille",
-"Atletico Madrid","AC Milan","Paris Saint-Germain"
+ {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
+ {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
+ {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
+ {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg"},
+ {name:"Atletico",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
+ {name:"Chelsea",logo:"https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg"}
 ];
 
-const logos={
-"Real Madrid":"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
-"Manchester United":"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
-"Olympique de Marseille":"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg",
-"Atletico Madrid":"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg",
-"AC Milan":"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg",
-"Paris Saint-Germain":"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"
-};
-
-/* -------- โปรแกรมแบบ Matchday จริง -------- */
-function roundRobin(list){
- let arr=[...list];
- if(arr.length%2)arr.push(null);
- let rounds=[];
- for(let i=0;i<arr.length-1;i++){
-  let pairs=[];
-  for(let j=0;j<arr.length/2;j++){
-   let a=arr[j],b=arr[arr.length-1-j];
-   if(a&&b)pairs.push({home:i%2?a:b,away:i%2?b:a,score:""});
-  }
-  rounds.push(pairs);
-  arr.splice(1,0,arr.pop());
+// สร้างโปรแกรมแข่ง (ไม่ให้ทีมติดกัน)
+let fixtures=[];
+for(let i=0;i<teams.length;i++){
+ for(let j=i+1;j<teams.length;j++){
+  fixtures.push({home:teams[i].name,away:teams[j].name,hs:"",as:""});
  }
- return rounds;
 }
+fixtures.sort(()=>Math.random()-0.5);
 
-function genFixtures(){
- let base=roundRobin(teams);
- let all=[];
- for(let r=0;r<3;r++){
-  base.forEach(day=>{
-   all.push(day.map(m=>({...m,home:r%2?m.away:m.home,away:r%2?m.home:m.away})));
-  });
- }
- return all;
-}
+let page=0, perPage=3;
 
-let pages=JSON.parse(localStorage.getItem("pages"))||genFixtures();
-let scorers=JSON.parse(localStorage.getItem("scorers"))||[];
-let page=0;
-
-function save(){
- localStorage.setItem("pages",JSON.stringify(pages));
- localStorage.setItem("scorers",JSON.stringify(scorers));
-}
-
-/* -------- โปรแกรม -------- */
-function renderProgram(){
- document.getElementById("pageTitle").innerText=`Matchday ${page+1}/${pages.length}`;
+function render(){
+ document.getElementById("pageText").innerText=`ชุดที่ ${page+1}/${Math.ceil(fixtures.length/perPage)}`;
  const box=document.getElementById("matches");
  box.innerHTML="";
- pages[page].forEach((m,i)=>{
+ fixtures.slice(page*perPage,page*perPage+perPage).forEach(m=>{
+  const h=teams.find(t=>t.name===m.home);
+  const a=teams.find(t=>t.name===m.away);
   box.innerHTML+=`
-  <div class="match">
-   <div class="team"><img src="${logos[m.home]}">${m.home}</div>
-   <div class="score">
-    <input value="${m.score.split('-')[0]||''}" onchange="setScore(${i},0,this.value)"> -
-    <input value="${m.score.split('-')[1]||''}" onchange="setScore(${i},1,this.value)">
-   </div>
-   <div class="team" style="justify-content:flex-end"><img src="${logos[m.away]}">${m.away}</div>
-  </div>`;
+   <div class="match">
+    <div class="team"><img src="${h.logo}">${h.name}</div>
+    <div class="score">
+     <input type="number" value="${m.hs}" onchange="m.hs=this.value;updateTable()">
+     -
+     <input type="number" value="${m.as}" onchange="m.as=this.value;updateTable()">
+    </div>
+    <div class="team"><img src="${a.logo}">${a.name}</div>
+   </div>`;
  });
 }
 
-function setScore(i,s,v){
- let sp=pages[page][i].score.split("-");
- sp[s]=v;
- pages[page][i].score=sp.join("-");
- save(); renderTable();
-}
+function updateTable(){
+ let table={};
+ teams.forEach(t=>table[t.name]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0,form:[]});
 
-/* -------- ตารางคะแนน -------- */
-function renderTable(){
- let st={},form={};
- teams.forEach(t=>st[t]={P:0,W:0,D:0,L:0,GF:0,GA:0});
- pages.flat().forEach(day=>{
-  day.forEach(m=>{
-   let [h,a]=m.score.split("-").map(Number);
-   if(isNaN(h)||isNaN(a))return;
-   let H=st[m.home],A=st[m.away];
-   H.P++;A.P++;H.GF+=h;H.GA+=a;A.GF+=a;A.GA+=h;
-   if(h>a){H.W++;A.L++;(form[m.home]=form[m.home]||[]).push("W");(form[m.away]=form[m.away]||[]).push("L")}
-   else if(h<a){A.W++;H.L++;(form[m.away]=form[m.away]||[]).push("W");(form[m.home]=form[m.home]||[]).push("L")}
-   else{H.D++;A.D++;(form[m.home]=form[m.home]||[]).push("D");(form[m.away]=form[m.away]||[]).push("D")}
-  });
+ fixtures.forEach(m=>{
+  if(m.hs!=="" && m.as!==""){
+   const h=table[m.home], a=table[m.away];
+   h.p++; a.p++;
+   h.gf+=+m.hs; h.ga+=+m.as;
+   a.gf+=+m.as; a.ga+=+m.hs;
+   if(+m.hs>+m.as){h.w++;h.pts+=3;h.form.push("W");a.l++;a.form.push("L")}
+   else if(+m.hs<+m.as){a.w++;a.pts+=3;a.form.push("W");h.l++;h.form.push("L")}
+   else{h.d++;a.d++;h.pts++;a.pts++;h.form.push("D");a.form.push("D")}
+  }
  });
- let arr=Object.keys(st).map(t=>({...st[t],team:t,GD:st[t].GF-st[t].GA,Pts:st[t].W*3+st[t].D,form:(form[t]||[]).slice(-5)}));
- arr.sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
- const tb=document.getElementById("tableBody");
- tb.innerHTML="";
- arr.forEach((t,i)=>{
-  tb.innerHTML+=`
-  <tr class="${i==0?'leader':i>=arr.length-2?'relegation':''}">
-   <td>${i+1}</td>
-   <td style="text-align:left"><img src="${logos[t.team]}"> ${t.team}</td>
-   <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td><td>${t.Pts}</td>
-   <td class="form">${t.form.map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+
+ let arr=Object.entries(table).sort((a,b)=>b[1].pts-a[1].pts || (b[1].gf-b[1].ga)-(a[1].gf-a[1].ga));
+ let html="<tr><th>ทีม</th><th>P</th><th>GD</th><th>PTS</th><th>ฟอร์ม 5 นัด</th></tr>";
+ arr.forEach(([name,t])=>{
+  html+=`<tr>
+   <td>${name}</td>
+   <td>${t.p}</td>
+   <td>${t.gf-t.ga}</td>
+   <td>${t.pts}</td>
+   <td class="form">${t.form.slice(-5).map(f=>`<span class="${f}">${f}</span>`).join(" ")}</td>
   </tr>`;
  });
+ document.getElementById("leagueTable").innerHTML=html;
 }
 
-/* -------- Top Scorer -------- */
-function renderScorer(){
- const sb=document.getElementById("scorerBody");
- sb.innerHTML="";
- scorers.sort((a,b)=>b.goals-a.goals);
- scorers.forEach((s,i)=>{
-  sb.innerHTML+=`<tr><td>${i+1}</td><td>${s.name}</td><td>${s.team}</td><td>${s.goals}</td></tr>`;
- });
+function prevPage(){if(page>0){page--;render()}}
+function nextPage(){if((page+1)*perPage<fixtures.length){page++;render()}}
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ event.target.classList.add('active');
 }
 
-function addScorer(){
- let name=prompt("ชื่อผู้เล่น");
- let team=prompt("ทีม");
- let goals=prompt("ประตู");
- if(!name||!team||!goals)return;
- scorers.push({name,team,goals:Number(goals)});
- save(); renderScorer();
-}
+function saveData(){localStorage.setItem("league",JSON.stringify(fixtures));alert("บันทึกแล้ว")}
+function resetData(){if(confirm("ล้างทั้งหมด?")){localStorage.removeItem("league");location.reload()}}
 
-/* -------- รีเซ็ต -------- */
-function resetAll(){
- if(!confirm("ล้างข้อมูลทั้งหมด?"))return;
- localStorage.clear();
- location.reload();
-}
+const saved=localStorage.getItem("league");
+if(saved) fixtures=JSON.parse(saved);
 
-/* -------- ควบคุม -------- */
-function prev(){if(page>0){page--;renderProgram();}}
-function next(){if(page<pages.length-1){page++;renderProgram();}}
-
-function show(id){
- document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- event.target.classList.add("active");
- renderTable(); renderScorer();
-}
-
-renderProgram();renderTable();renderScorer();
+render(); updateTable();
 </script>
 
 </body>
