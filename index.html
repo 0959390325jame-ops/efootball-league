@@ -14,7 +14,7 @@ header{
 nav{display:flex;background:#fff}
 nav button{
   flex:1;border:none;background:none;
-  padding:12px;font-size:16px
+  padding:12px;font-size:15px
 }
 nav button.active{
   border-bottom:4px solid purple;
@@ -39,23 +39,23 @@ td{
 
 .team{
   display:flex;align-items:center;gap:8px;
-  justify-content:flex-start
 }
 .team img{width:24px;height:24px}
 
-/* สีโซน */
+/* ตารางคะแนน */
 .champ{background:#d1fae5}
 .relegate{background:#fee2e2}
 
-/* โปรแกรม */
-.match{
-  background:#fff;margin-bottom:8px;
-  padding:10px;border-radius:8px;
-  display:flex;justify-content:space-between;
-  align-items:center;font-size:15px
+/* input Top Scorer */
+input{
+  width:100%;padding:8px;
+  margin:5px 0;font-size:15px
 }
-.match .team{
-  width:45%
+button.save{
+  width:100%;padding:10px;
+  background:#16a34a;color:#fff;
+  border:none;border-radius:6px;
+  font-size:16px
 }
 </style>
 </head>
@@ -67,10 +67,22 @@ td{
 <nav>
   <button class="active" onclick="showPage('program')">โปรแกรม</button>
   <button onclick="showPage('table')">ตาราง</button>
+  <button onclick="showPage('scorer')">Top Scorer</button>
 </nav>
 
-<!-- PROGRAM -->
-<div id="program" class="page active"></div>
+<!-- PROGRAM (ตารางแข่งขัน) -->
+<div id="program" class="page active">
+<table>
+<thead>
+<tr>
+<th>ทีมเหย้า</th>
+<th>ผล</th>
+<th>ทีมเยือน</th>
+</tr>
+</thead>
+<tbody id="programBody"></tbody>
+</table>
+</div>
 
 <!-- TABLE -->
 <div id="table" class="page">
@@ -88,8 +100,18 @@ td{
 </table>
 </div>
 
+<!-- TOP SCORER (เขียนเอง) -->
+<div id="scorer" class="page">
+<input id="scorerName" placeholder="ชื่อผู้เล่น">
+<input id="scorerGoal" type="number" placeholder="จำนวนประตู">
+<button class="save" onclick="saveScorer()">บันทึก</button>
+
+<h3>Top Scorer ปัจจุบัน</h3>
+<p id="scorerResult">ยังไม่มีข้อมูล</p>
+</div>
+
 <script>
-/* ====== ทีม ====== */
+/* ===== ทีม ===== */
 const teams=[
 {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
 {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
@@ -99,47 +121,39 @@ const teams=[
 {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ====== ตารางคะแนน (เริ่มต้น) ====== */
-let standings=teams.map(t=>({
-...t,P:0,GD:0,PTS:0
-}));
+/* ===== ตารางคะแนน ===== */
+let standings=teams.map(t=>({...t,P:0,GD:0,PTS:0}));
 
-/* ====== โปรแกรมแข่ง (ตรงทีม ไม่มั่ว) ====== */
+/* ===== โปรแกรมแข่งขัน ===== */
 const matches=[
 ["Real Madrid","Man United"],
 ["Marseille","Atletico Madrid"],
 ["AC Milan","PSG"],
-
 ["Real Madrid","Marseille"],
 ["Man United","AC Milan"],
 ["Atletico Madrid","PSG"],
-
 ["Real Madrid","Atletico Madrid"],
 ["Man United","PSG"],
 ["Marseille","AC Milan"]
 ];
 
-/* ====== Render PROGRAM ====== */
+/* Render PROGRAM TABLE */
 function renderProgram(){
-const box=document.getElementById("program");
-box.innerHTML="";
+const body=document.getElementById("programBody");
+body.innerHTML="";
 matches.forEach(m=>{
 const home=teams.find(t=>t.name===m[0]);
 const away=teams.find(t=>t.name===m[1]);
-box.innerHTML+=`
-<div class="match">
-  <div class="team">
-    <img src="${home.logo}">${home.name}
-  </div>
-  <b>VS</b>
-  <div class="team" style="justify-content:flex-end">
-    ${away.name}<img src="${away.logo}">
-  </div>
-</div>`;
+body.innerHTML+=`
+<tr>
+<td class="team"><img src="${home.logo}">${home.name}</td>
+<td>-</td>
+<td class="team"><img src="${away.logo}">${away.name}</td>
+</tr>`;
 });
 }
 
-/* ====== Render TABLE ====== */
+/* Render TABLE */
 function renderTable(){
 const body=document.getElementById("tableBody");
 body.innerHTML="";
@@ -147,9 +161,7 @@ standings.forEach((t,i)=>{
 body.innerHTML+=`
 <tr class="${i==0?'champ':i>=4?'relegate':''}">
 <td>${i+1}</td>
-<td class="team">
-  <img src="${t.logo}">${t.name}
-</td>
+<td class="team"><img src="${t.logo}">${t.name}</td>
 <td>${t.P}</td>
 <td>${t.GD}</td>
 <td>${t.PTS}</td>
@@ -157,7 +169,20 @@ body.innerHTML+=`
 });
 }
 
-/* ====== เปลี่ยนหน้า ====== */
+/* Top Scorer */
+function saveScorer(){
+const name=document.getElementById("scorerName").value;
+const goal=document.getElementById("scorerGoal").value;
+if(!name||!goal) return;
+localStorage.setItem("scorer",`${name} - ${goal} ประตู`);
+loadScorer();
+}
+function loadScorer(){
+const s=localStorage.getItem("scorer");
+if(s) document.getElementById("scorerResult").innerText=s;
+}
+
+/* Navigation */
 function showPage(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
@@ -167,6 +192,7 @@ event.target.classList.add("active");
 
 renderProgram();
 renderTable();
+loadScorer();
 </script>
 
 </body>
