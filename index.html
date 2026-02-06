@@ -135,7 +135,6 @@ th{
   <button onclick="showPage('fixtures')">Fixtures</button>
 </nav>
 
-<!-- TABLE -->
 <section id="table" class="active">
 <table>
 <thead>
@@ -150,7 +149,6 @@ th{
 </table>
 </section>
 
-<!-- FIXTURES -->
 <section id="fixtures">
 <div id="fixtureList"></div>
 
@@ -172,45 +170,96 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-// ===== FIXTURES (FROM YOUR LIST) =====
+/* ===== FIXTURES 15 ROUNDS (45 MATCHES) ===== */
 let fixtures=[
- {round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
- {round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
- {round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
- {round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
- {round:1,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
- {round:1,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
+/* รอบ 1 */
+{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
+{round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
 
- {round:2,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
- {round:2,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
- {round:2,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
- {round:2,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
- {round:2,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
- {round:2,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+/* รอบ 2 */
+{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
+{round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
 
- {round:3,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
- {round:3,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
- {round:3,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
- {round:3,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false},
- {round:3,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false},
- {round:3,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
+/* รอบ 3 */
+{round:3,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
+{round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 4 */
+{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:4,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
+{round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 5 */
+{round:5,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
+{round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 6 */
+{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false},
+{round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:6,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 7 */
+{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",locked:false},
+{round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",locked:false},
+{round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 8 */
+{round:8,h:"Marseille",a:"Man United",hs:"",as:"",locked:false},
+{round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",locked:false},
+{round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 9 */
+{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",locked:false},
+{round:9,h:"PSG",a:"AC Milan",hs:"",as:"",locked:false},
+{round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 10 */
+{round:10,h:"PSG",a:"Man United",hs:"",as:"",locked:false},
+{round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",locked:false},
+{round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 11 */
+{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
+{round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:11,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 12 */
+{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
+{round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 13 */
+{round:13,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
+{round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 14 */
+{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:14,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
+{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 15 */
+{round:15,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
+{round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
 ];
 
 const perPage=6;
 let page=0;
 
-// ===== STORAGE =====
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved) fixtures=saved;
 
-// ===== NAV =====
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  render();
 }
 
-// ===== FIXTURES RENDER (WITH ROUND) =====
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
@@ -238,7 +287,6 @@ function renderFixtures(){
  });
 }
 
-// ===== SCORE =====
 function updateScore(i,k,v){
  fixtures[i][k]=v;
  if(fixtures[i].hs!=="" && fixtures[i].as!==""){
@@ -247,7 +295,6 @@ function updateScore(i,k,v){
  renderTable();
 }
 
-// ===== TABLE =====
 function renderTable(){
  let stats={};
  teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
@@ -284,11 +331,10 @@ function renderTable(){
  </tr>`).join("");
 }
 
-// ===== HELPERS =====
 function getLogo(n){return teams.find(t=>t.name===n).logo;}
 function saveResults(){
  localStorage.setItem("efs2",JSON.stringify(fixtures));
- alert("Saved & locked");
+ alert("Saved!");
 }
 function resetAll(){
  if(confirm("Reset all data?")){
