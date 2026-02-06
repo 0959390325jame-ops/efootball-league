@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>eFootball Premier League</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
-  background:#0b0f1a;
-  color:#fff;
+  background:#f5f5f5;
 }
 header{
   background:#37003c;
+  color:white;
   padding:15px;
   text-align:center;
   font-size:22px;
@@ -21,48 +20,53 @@ header{
 }
 .container{
   padding:15px;
-  max-width:1000px;
-  margin:auto;
-}
-h2{
-  margin-top:30px;
-  border-left:5px solid #00ff87;
-  padding-left:10px;
 }
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:10px;
+  background:white;
 }
 th{
-  background:#2b0030;
-  padding:10px;
+  background:#37003c;
+  color:white;
+  padding:8px;
 }
 td{
-  background:#111;
   padding:8px;
+  border-bottom:1px solid #ddd;
   text-align:center;
-  border-bottom:1px solid #333;
 }
-tr:nth-child(2) td{background:#bfa100;color:#000;} /* 1 */
-tr:nth-child(3) td{background:#9e9e9e;color:#000;} /* 2 */
-tr:nth-child(4) td{background:#cd7f32;color:#000;} /* 3 */
-
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  background:#00ff87;
-  border:none;
-  font-size:16px;
-  font-weight:bold;
-  border-radius:8px;
+td.team{
+  text-align:left;
+}
+.logo{
+  width:22px;
+  vertical-align:middle;
+  margin-right:6px;
 }
 .match{
-  background:#1c1c2b;
+  background:white;
   padding:10px;
-  margin-top:8px;
+  margin-bottom:10px;
   border-radius:8px;
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
+}
+input{
+  width:40px;
+  text-align:center;
+}
+button{
+  background:#00ff85;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.reset{
+  background:#e90052;
+  color:white;
+  margin-bottom:15px;
 }
 </style>
 </head>
@@ -73,178 +77,126 @@ button{
 
 <div class="container">
 
+<button class="reset" onclick="resetLeague()">🔄 รีเซ็ตฤดูกาล</button>
+
 <h2>📊 ตารางคะแนน</h2>
 <table>
 <thead>
 <tr>
-  <th>#</th><th>ทีม</th><th>แข่ง</th>
-  <th>ชนะ</th><th>เสมอ</th><th>แพ้</th><th>แต้ม</th>
+<th>#</th>
+<th>ทีม</th>
+<th>P</th>
+<th>W</th>
+<th>D</th>
+<th>L</th>
+<th>Pts</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
-<hr>
 
-<h2>✍️ กรอกผลการแข่งขัน</h2>
-
+<h2 style="margin-top:25px;">⚽ กรอกผลการแข่งขัน</h2>
 <div id="fixtures"></div>
-<button onclick="playNextMatch()">▶️ แข่งคู่ถัดไป</button>
-
-<h2>🗓️ ตารางแข่งขัน</h2>
-<div id="fixtures"></div>
-
-<h2>⚽ ผลการแข่งขัน</h2>
-<div id="results"></div>
 
 </div>
 
 <script>
 let teams = [
- {name:"Real Madrid CF",p:0,w:0,d:0,l:0,pts:0},
- {name:"Manchester United FC",p:0,w:0,d:0,l:0,pts:0},
- {name:"Olympique de Marseille",p:0,w:0,d:0,l:0,pts:0},
- {name:"Atlético de Madrid",p:0,w:0,d:0,l:0,pts:0},
- {name:"AC Milan",p:0,w:0,d:0,l:0,pts:0},
- {name:"Paris Saint-Germain FC",p:0,w:0,d:0,l:0,pts:0}
+ {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Manchester United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg",p:0,w:0,d:0,l:0,pts:0},
+ {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg",p:0,w:0,d:0,l:0,pts:0}
 ];
 
-// สร้างตารางแข่ง (ทุกทีมเจอกัน 1 ครั้ง)
 let matches=[];
-for(let i=0;i<teams.length;i++){
- for(let j=i+1;j<teams.length;j++){
+
+function generateMatches(){
+ matches=[];
+ for(let i=0;i<teams.length;i++){
+  for(let j=i+1;j<teams.length;j++){
    matches.push({a:i,b:j,played:false});
+  }
  }
 }
 
 function renderTable(){
- teams.sort((a,b)=>b.pts-a.pts);
- let html="";
- teams.forEach((t,i)=>{
-   html+=`
+ let tb=document.getElementById("tableBody");
+ tb.innerHTML="";
+ teams
+ .sort((a,b)=>b.pts-a.pts)
+ .forEach((t,i)=>{
+  tb.innerHTML+=`
    <tr>
     <td>${i+1}</td>
-    <td>${t.name}</td>
+    <td class="team">
+      <img src="${t.logo}" class="logo">
+      ${t.name}
+    </td>
     <td>${t.p}</td>
     <td>${t.w}</td>
     <td>${t.d}</td>
     <td>${t.l}</td>
-    <td>${t.pts}</td>
+    <td><b>${t.pts}</b></td>
    </tr>`;
  });
- document.getElementById("tableBody").innerHTML=html;
 }
 
 function renderFixtures(){
- let html="";
+ let fx=document.getElementById("fixtures");
+ fx.innerHTML="";
  matches.forEach((m,i)=>{
-   html+=`<div class="match">
-   ${i+1}. ${teams[m.a].name} vs ${teams[m.b].name}
-   ${m.played?"✅":"❌"}
+  if(m.played) return;
+  fx.innerHTML+=`
+   <div class="match">
+    <img src="${teams[m.a].logo}" class="logo">
+    ${teams[m.a].name}
+    <input id="g1-${i}" type="number" min="0">
+    -
+    <input id="g2-${i}" type="number" min="0">
+    ${teams[m.b].name}
+    <img src="${teams[m.b].logo}" class="logo">
+    <br><br>
+    <button onclick="submitScore(${i})">บันทึกผล</button>
    </div>`;
  });
- document.getElementById("fixtures").innerHTML=html;
 }
 
-function playNextMatch(){
- let match = matches.find(m=>!m.played);
- if(!match){ alert("แข่งครบทุกคู่แล้ว"); return; }
+function submitScore(i){
+ let m=matches[i];
+ if(m.played) return;
 
- let A=teams[match.a];
- let B=teams[match.b];
- let g1=Math.floor(Math.random()*5);
- let g2=Math.floor(Math.random()*5);
+ let g1=parseInt(document.getElementById(`g1-${i}`).value);
+ let g2=parseInt(document.getElementById(`g2-${i}`).value);
+ if(isNaN(g1)||isNaN(g2)) return alert("กรอกสกอร์ก่อน");
 
+ let A=teams[m.a], B=teams[m.b];
  A.p++; B.p++;
+
  if(g1>g2){A.w++;A.pts+=3;B.l++;}
  else if(g2>g1){B.w++;B.pts+=3;A.l++;}
  else{A.d++;B.d++;A.pts++;B.pts++;}
 
- match.played=true;
-
- document.getElementById("results").innerHTML=
- `<div class="match">⚽ ${A.name} ${g1} - ${g2} ${B.name}</div>`
- + document.getElementById("results").innerHTML;
-
+ m.played=true;
  renderTable();
  renderFixtures();
 }
 
+function resetLeague(){
+ if(!confirm("รีเซ็ตฤดูกาลทั้งหมด?")) return;
+ teams.forEach(t=>{
+  t.p=t.w=t.d=t.l=t.pts=0;
+ });
+ generateMatches();
+ renderTable();
+ renderFixtures();
+}
+
+generateMatches();
 renderTable();
 renderFixtures();
 </script>
-<script>
-let teams = [
-  { name:"Real Madrid", p:0,w:0,d:0,l:0,pts:0 },
-  { name:"Manchester United", p:0,w:0,d:0,l:0,pts:0 },
-  { name:"Marseille", p:0,w:0,d:0,l:0,pts:0 },
-  { name:"Atletico Madrid", p:0,w:0,d:0,l:0,pts:0 },
-  { name:"AC Milan", p:0,w:0,d:0,l:0,pts:0 },
-  { name:"Paris Saint-Germain", p:0,w:0,d:0,l:0,pts:0 }
-];
 
-let fixtures=[];
-for(let i=0;i<teams.length;i++){
-  for(let j=i+1;j<teams.length;j++){
-    fixtures.push({a:i,b:j,played:false});
-  }
-}
-
-function renderTable(){
-  const tb=document.getElementById("tableBody");
-  tb.innerHTML="";
-  teams.sort((a,b)=>b.pts-a.pts).forEach((t,i)=>{
-    tb.innerHTML+=`
-    <tr>
-      <td>${i+1}</td>
-      <td>${t.name}</td>
-      <td>${t.p}</td>
-      <td>${t.w}</td>
-      <td>${t.d}</td>
-      <td>${t.l}</td>
-      <td>${t.pts}</td>
-    </tr>`;
-  });
-}
-
-function submitScore(i){
-  let m=fixtures[i];
-  if(m.played) return;
-
-  let g1=parseInt(document.getElementById("g1_"+i).value);
-  let g2=parseInt(document.getElementById("g2_"+i).value);
-  if(isNaN(g1)||isNaN(g2)) return alert("กรอกสกอร์ก่อน");
-
-  let A=teams[m.a], B=teams[m.b];
-  A.p++; B.p++;
-
-  if(g1>g2){A.w++;B.l++;A.pts+=3;}
-  else if(g2>g1){B.w++;A.l++;B.pts+=3;}
-  else{A.d++;B.d++;A.pts++;B.pts++;}
-
-  m.played=true;
-  renderTable();
-  renderFixtures();
-}
-
-function renderFixtures(){
-  const fx=document.getElementById("fixtures");
-  fx.innerHTML="";
-  fixtures.forEach((m,i)=>{
-    fx.innerHTML+=`
-    <div class="match">
-      ${teams[m.a].name}
-      <input id="g1_${i}" type="number" min="0" style="width:40px">
-      -
-      <input id="g2_${i}" type="number" min="0" style="width:40px">
-      ${teams[m.b].name}
-      ${m.played?" ✅":
-      `<button onclick="submitScore(${i})">บันทึก</button>`}
-    </div>`;
-  });
-}
-
-renderTable();
-renderFixtures();
-</script>
 </body>
 </html>
