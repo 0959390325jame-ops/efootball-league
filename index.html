@@ -1,140 +1,172 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <title>eFootball Premier League</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
   background:#0b0f1a;
   color:#fff;
-  font-family:Arial, Helvetica, sans-serif;
-  padding:20px;
 }
-
-h1{
+header{
+  background:#37003c;
+  padding:15px;
   text-align:center;
-  color:#00ffcc;
+  font-size:22px;
+  font-weight:bold;
 }
-
+.container{
+  padding:15px;
+  max-width:1000px;
+  margin:auto;
+}
+h2{
+  margin-top:30px;
+  border-left:5px solid #00ff87;
+  padding-left:10px;
+}
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:20px;
+  margin-top:10px;
 }
-
 th{
-  background:#37003c;
-  color:#fff;
+  background:#2b0030;
   padding:10px;
 }
-
 td{
   background:#111;
   padding:8px;
   text-align:center;
   border-bottom:1px solid #333;
 }
-
-tr:nth-child(2) td{background:#bfa100;color:#000;} /* อันดับ 1 */
-tr:nth-child(3) td{background:#9e9e9e;color:#000;} /* อันดับ 2 */
-tr:nth-child(4) td{background:#cd7f32;color:#000;} /* อันดับ 3 */
-
-input, button{
-  padding:8px;
-  margin:5px 0;
-  width:100%;
-  font-size:16px;
-}
+tr:nth-child(2) td{background:#bfa100;color:#000;} /* 1 */
+tr:nth-child(3) td{background:#9e9e9e;color:#000;} /* 2 */
+tr:nth-child(4) td{background:#cd7f32;color:#000;} /* 3 */
 
 button{
-  background:#00ffcc;
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#00ff87;
   border:none;
+  font-size:16px;
   font-weight:bold;
+  border-radius:8px;
+}
+.match{
+  background:#1c1c2b;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>⚽ eFootball Premier League</h1>
+<header>🏆 eFootball Premier League</header>
 
-<!-- ตารางคะแนน -->
-<table id="table">
-  <tr>
-    <th>อันดับ</th>
-    <th>ทีม</th>
-    <th>แข่ง</th>
-    <th>ได้</th>
-    <th>เสีย</th>
-    <th>แต้ม</th>
-  </tr>
+<div class="container">
+
+<h2>📊 ตารางคะแนน</h2>
+<table>
+<thead>
+<tr>
+  <th>#</th><th>ทีม</th><th>แข่ง</th>
+  <th>ชนะ</th><th>เสมอ</th><th>แพ้</th><th>แต้ม</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
 </table>
 
-<hr>
+<button onclick="playNextMatch()">▶️ แข่งคู่ถัดไป</button>
 
-<h2>➕ เพิ่มทีม</h2>
-<input id="teamName" placeholder="ชื่อทีม">
-<button onclick="addTeam()">เพิ่มทีม</button>
+<h2>🗓️ ตารางแข่งขัน</h2>
+<div id="fixtures"></div>
 
-<hr>
+<h2>⚽ ผลการแข่งขัน</h2>
+<div id="results"></div>
 
-<h2>📝 กรอกผลการแข่งขัน</h2>
-<input id="teamA" placeholder="ทีม A">
-<input id="scoreA" type="number" placeholder="ประตูทีม A">
-<input id="teamB" placeholder="ทีม B">
-<input id="scoreB" type="number" placeholder="ประตูทีม B">
-<button onclick="addMatch()">บันทึกผล</button>
+</div>
 
 <script>
-let teams = [];
+let teams = [
+ {name:"Real Madrid CF",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Manchester United FC",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Olympique de Marseille",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Atlético de Madrid",p:0,w:0,d:0,l:0,pts:0},
+ {name:"AC Milan",p:0,w:0,d:0,l:0,pts:0},
+ {name:"Paris Saint-Germain FC",p:0,w:0,d:0,l:0,pts:0}
+];
 
-function addTeam(){
-  let name = document.getElementById("teamName").value;
-  if(!name) return;
-  teams.push({name, played:0, for:0, against:0, points:0});
-  document.getElementById("teamName").value="";
-  render();
+// สร้างตารางแข่ง (ทุกทีมเจอกัน 1 ครั้ง)
+let matches=[];
+for(let i=0;i<teams.length;i++){
+ for(let j=i+1;j<teams.length;j++){
+   matches.push({a:i,b:j,played:false});
+ }
 }
 
-function addMatch(){
-  let a=document.getElementById("teamA").value;
-  let b=document.getElementById("teamB").value;
-  let sa=+document.getElementById("scoreA").value;
-  let sb=+document.getElementById("scoreB").value;
-
-  let A=teams.find(t=>t.name==a);
-  let B=teams.find(t=>t.name==b);
-  if(!A||!B) return alert("ชื่อทีมไม่ถูก");
-
-  A.played++; B.played++;
-  A.for+=sa; A.against+=sb;
-  B.for+=sb; B.against+=sa;
-
-  if(sa>sb) A.points+=3;
-  else if(sb>sa) B.points+=3;
-  else {A.points+=1; B.points+=1;}
-
-  render();
+function renderTable(){
+ teams.sort((a,b)=>b.pts-a.pts);
+ let html="";
+ teams.forEach((t,i)=>{
+   html+=`
+   <tr>
+    <td>${i+1}</td>
+    <td>${t.name}</td>
+    <td>${t.p}</td>
+    <td>${t.w}</td>
+    <td>${t.d}</td>
+    <td>${t.l}</td>
+    <td>${t.pts}</td>
+   </tr>`;
+ });
+ document.getElementById("tableBody").innerHTML=html;
 }
 
-function render(){
-  teams.sort((a,b)=>b.points-a.points || (b.for-b.against)-(a.for-a.against));
-  let html=`<tr>
-    <th>อันดับ</th><th>ทีม</th><th>แข่ง</th><th>ได้</th><th>เสีย</th><th>แต้ม</th>
-  </tr>`;
-  teams.forEach((t,i)=>{
-    html+=`<tr>
-      <td>${i+1}</td>
-      <td>${t.name}</td>
-      <td>${t.played}</td>
-      <td>${t.for}</td>
-      <td>${t.against}</td>
-      <td>${t.points}</td>
-    </tr>`;
-  });
-  document.getElementById("table").innerHTML=html;
+function renderFixtures(){
+ let html="";
+ matches.forEach((m,i)=>{
+   html+=`<div class="match">
+   ${i+1}. ${teams[m.a].name} vs ${teams[m.b].name}
+   ${m.played?"✅":"❌"}
+   </div>`;
+ });
+ document.getElementById("fixtures").innerHTML=html;
 }
+
+function playNextMatch(){
+ let match = matches.find(m=>!m.played);
+ if(!match){ alert("แข่งครบทุกคู่แล้ว"); return; }
+
+ let A=teams[match.a];
+ let B=teams[match.b];
+ let g1=Math.floor(Math.random()*5);
+ let g2=Math.floor(Math.random()*5);
+
+ A.p++; B.p++;
+ if(g1>g2){A.w++;A.pts+=3;B.l++;}
+ else if(g2>g1){B.w++;B.pts+=3;A.l++;}
+ else{A.d++;B.d++;A.pts++;B.pts++;}
+
+ match.played=true;
+
+ document.getElementById("results").innerHTML=
+ `<div class="match">⚽ ${A.name} ${g1} - ${g2} ${B.name}</div>`
+ + document.getElementById("results").innerHTML;
+
+ renderTable();
+ renderFixtures();
+}
+
+renderTable();
+renderFixtures();
 </script>
 
 </body>
