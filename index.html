@@ -7,56 +7,27 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#f2f2f2}
-header{
-  background:linear-gradient(90deg,#4a004e,#8e2de2);
-  color:#fff;padding:14px;text-align:center;font-size:22px
-}
+header{background:linear-gradient(90deg,#4a004e,#8e2de2);color:#fff;padding:14px;text-align:center;font-size:22px}
 nav{display:flex;background:#fff}
-nav button{
-  flex:1;border:none;background:none;
-  padding:12px;font-size:15px
-}
-nav button.active{
-  border-bottom:4px solid purple;
-  color:purple;font-weight:bold
-}
+nav button{flex:1;border:none;background:none;padding:12px;font-size:15px}
+nav button.active{border-bottom:4px solid purple;color:purple;font-weight:bold}
 .page{display:none;padding:10px}
 .page.active{display:block}
 
-/* ตาราง */
-table{
-  width:100%;border-collapse:collapse;
-  background:#fff;font-size:14px
-}
-th{
-  background:#5a0066;color:#fff;
-  padding:8px
-}
-td{
-  padding:8px;border-bottom:1px solid #ddd;
-  text-align:center
-}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+th{background:#5a0066;color:#fff;padding:8px}
+td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
 
-.team{
-  display:flex;align-items:center;gap:8px;
-}
-.team img{width:24px;height:24px}
+.team{display:flex;align-items:center;gap:6px}
+.team img{width:22px;height:22px}
 
-/* ตารางคะแนน */
+input.score{width:35px;text-align:center}
+
+button.save{background:#16a34a;color:#fff;border:none;padding:6px 10px;border-radius:6px}
+button.reset{background:#dc2626;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;margin-top:10px}
+
 .champ{background:#d1fae5}
 .relegate{background:#fee2e2}
-
-/* input Top Scorer */
-input{
-  width:100%;padding:8px;
-  margin:5px 0;font-size:15px
-}
-button.save{
-  width:100%;padding:10px;
-  background:#16a34a;color:#fff;
-  border:none;border-radius:6px;
-  font-size:16px
-}
 </style>
 </head>
 
@@ -65,23 +36,26 @@ button.save{
 <header>🏆 eFootball League</header>
 
 <nav>
-  <button class="active" onclick="showPage('program')">โปรแกรม</button>
-  <button onclick="showPage('table')">ตาราง</button>
-  <button onclick="showPage('scorer')">Top Scorer</button>
+<button class="active" onclick="showPage('program')">โปรแกรม</button>
+<button onclick="showPage('table')">ตาราง</button>
+<button onclick="showPage('scorer')">Top Scorer</button>
 </nav>
 
-<!-- PROGRAM (ตารางแข่งขัน) -->
+<!-- PROGRAM -->
 <div id="program" class="page active">
 <table>
 <thead>
 <tr>
-<th>ทีมเหย้า</th>
-<th>ผล</th>
-<th>ทีมเยือน</th>
+<th>เหย้า</th>
+<th>สกอร์</th>
+<th>เยือน</th>
+<th>บันทึก</th>
 </tr>
 </thead>
 <tbody id="programBody"></tbody>
 </table>
+
+<button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
 </div>
 
 <!-- TABLE -->
@@ -89,75 +63,98 @@ button.save{
 <table>
 <thead>
 <tr>
-<th>#</th>
-<th>ทีม</th>
-<th>P</th>
-<th>GD</th>
-<th>Pts</th>
+<th>#</th><th>ทีม</th><th>P</th><th>GD</th><th>Pts</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
 </div>
 
-<!-- TOP SCORER (เขียนเอง) -->
+<!-- TOP SCORER -->
 <div id="scorer" class="page">
-<input id="scorerName" placeholder="ชื่อผู้เล่น">
-<input id="scorerGoal" type="number" placeholder="จำนวนประตู">
+<p>✍️ เขียน Top Scorer เอง</p>
+<input id="scorerInput" placeholder="เช่น Ronaldo - 8 ประตู">
 <button class="save" onclick="saveScorer()">บันทึก</button>
-
-<h3>Top Scorer ปัจจุบัน</h3>
-<p id="scorerResult">ยังไม่มีข้อมูล</p>
+<p id="scorerShow"></p>
 </div>
 
 <script>
-/* ===== ทีม ===== */
 const teams=[
 {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
 {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
 {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg"},
-{name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
+{name:"Atletico",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
 {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
 {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ===== ตารางคะแนน ===== */
-let standings=teams.map(t=>({...t,P:0,GD:0,PTS:0}));
+let table=JSON.parse(localStorage.getItem("table")) ||
+teams.map(t=>({...t,P:0,GD:0,PTS:0}));
 
-/* ===== โปรแกรมแข่งขัน ===== */
-const matches=[
-["Real Madrid","Man United"],
-["Marseille","Atletico Madrid"],
-["AC Milan","PSG"],
-["Real Madrid","Marseille"],
-["Man United","AC Milan"],
-["Atletico Madrid","PSG"],
-["Real Madrid","Atletico Madrid"],
-["Man United","PSG"],
-["Marseille","AC Milan"]
-];
+/* ===== สร้างโปรแกรม 3 รอบ ===== */
+function generateMatches(){
+let base=[];
+for(let i=0;i<teams.length;i++){
+for(let j=i+1;j<teams.length;j++){
+base.push([teams[i].name,teams[j].name]);
+base.push([teams[j].name,teams[i].name]);
+}
+}
+for(let i=0;i<teams.length;i++){
+let r=teams[Math.floor(Math.random()*teams.length)].name;
+if(r!==teams[i].name){
+Math.random()>0.5 ? base.push([teams[i].name,r]) : base.push([r,teams[i].name]);
+}
+}
+return base;
+}
 
-/* Render PROGRAM TABLE */
+let matches=JSON.parse(localStorage.getItem("matches")) || generateMatches();
+localStorage.setItem("matches",JSON.stringify(matches));
+
 function renderProgram(){
 const body=document.getElementById("programBody");
 body.innerHTML="";
-matches.forEach(m=>{
-const home=teams.find(t=>t.name===m[0]);
-const away=teams.find(t=>t.name===m[1]);
+matches.forEach((m,i)=>{
+const h=teams.find(t=>t.name===m[0]);
+const a=teams.find(t=>t.name===m[1]);
 body.innerHTML+=`
 <tr>
-<td class="team"><img src="${home.logo}">${home.name}</td>
-<td>-</td>
-<td class="team"><img src="${away.logo}">${away.name}</td>
+<td class="team"><img src="${h.logo}">${h.name}</td>
+<td>
+<input class="score" id="h${i}"> -
+<input class="score" id="a${i}">
+</td>
+<td class="team"><img src="${a.logo}">${a.name}</td>
+<td><button class="save" onclick="saveMatch(${i})">✔</button></td>
 </tr>`;
 });
 }
 
-/* Render TABLE */
+function saveMatch(i){
+const hg=parseInt(document.getElementById("h"+i).value);
+const ag=parseInt(document.getElementById("a"+i).value);
+if(isNaN(hg)||isNaN(ag)) return;
+
+const h=table.find(t=>t.name===matches[i][0]);
+const a=table.find(t=>t.name===matches[i][1]);
+
+h.P++; a.P++;
+h.GD+=hg-ag; a.GD+=ag-hg;
+
+if(hg>ag) h.PTS+=3;
+else if(hg<ag) a.PTS+=3;
+else {h.PTS++;a.PTS++;}
+
+localStorage.setItem("table",JSON.stringify(table));
+renderTable();
+}
+
 function renderTable(){
 const body=document.getElementById("tableBody");
 body.innerHTML="";
-standings.forEach((t,i)=>{
+table.sort((a,b)=>b.PTS-a.PTS||b.GD-a.GD);
+table.forEach((t,i)=>{
 body.innerHTML+=`
 <tr class="${i==0?'champ':i>=4?'relegate':''}">
 <td>${i+1}</td>
@@ -169,20 +166,20 @@ body.innerHTML+=`
 });
 }
 
+function resetAll(){
+localStorage.clear();
+location.reload();
+}
+
 /* Top Scorer */
 function saveScorer(){
-const name=document.getElementById("scorerName").value;
-const goal=document.getElementById("scorerGoal").value;
-if(!name||!goal) return;
-localStorage.setItem("scorer",`${name} - ${goal} ประตู`);
+localStorage.setItem("scorer",document.getElementById("scorerInput").value);
 loadScorer();
 }
 function loadScorer(){
-const s=localStorage.getItem("scorer");
-if(s) document.getElementById("scorerResult").innerText=s;
+document.getElementById("scorerShow").innerText=localStorage.getItem("scorer")||"";
 }
 
-/* Navigation */
 function showPage(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
