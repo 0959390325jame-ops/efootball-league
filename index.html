@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>eFootball League</title>
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  margin:0;
-  background:#f5f5f5;
+:root{
+  --pl-purple:#37003c;
+  --pl-green:#00ff87;
+  --bg:#f2f2f2;
 }
 
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+}
+
+/* ===== HEADER ===== */
 header{
-  background:linear-gradient(90deg,#3b004f,#6a006f);
+  background:linear-gradient(90deg,#37003c,#6f1d7a);
   color:#fff;
   text-align:center;
-  padding:12px;
-  font-size:20px;
+  padding:14px;
+  font-size:22px;
   font-weight:bold;
 }
 
+/* ===== NAV ===== */
 nav{
   display:flex;
-  justify-content:space-around;
   background:#fff;
-  border-bottom:2px solid #ddd;
 }
-
 nav button{
   flex:1;
   padding:12px;
@@ -35,90 +40,95 @@ nav button{
   border:none;
   background:none;
 }
-
 nav button.active{
-  color:#6a006f;
-  border-bottom:3px solid #6a006f;
-  font-weight:bold;
+  color:var(--pl-purple);
+  border-bottom:3px solid var(--pl-purple);
 }
 
-section{display:none;padding:10px;}
-section.active{display:block;}
+/* ===== PAGE ===== */
+.page{ display:none; padding:10px; }
+.page.active{ display:block; }
 
+/* ===== MATCH CARD ===== */
+.match{
+  background:#fff;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.team{
+  width:40%;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.team img{
+  width:32px;height:32px;
+}
+.score{
+  width:20%;
+  display:flex;
+  gap:4px;
+}
+.score input{
+  width:40px;
+  text-align:center;
+  font-size:16px;
+}
+.save-btn{
+  background:#00c853;
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+}
+
+/* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
   background:#fff;
   font-size:14px;
 }
-
 th{
-  background:#6a006f;
+  background:var(--pl-purple);
   color:#fff;
   padding:6px;
 }
-
 td{
-  text-align:center;
   padding:6px;
+  text-align:center;
   border-bottom:1px solid #eee;
 }
+.champ{ background:#d9fbe5; }
+.releg{ background:#ffd6d6; }
 
-.team-cell{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.team-cell img{
-  width:22px;
-  height:22px;
-}
-
-.champion{background:#d9f7d9;}
-.relegation{background:#ffd6d6;}
-
-.match{
-  background:#fff;
-  margin-bottom:8px;
-  padding:8px;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.match-team{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  width:40%;
-}
-
-.match-team img{width:28px;}
-
-.score input{
-  width:40px;
-  font-size:16px;
-  text-align:center;
-}
-
-.save-btn{
-  background:#28a745;
+/* ===== FORM ===== */
+.form span{
+  display:inline-block;
+  width:18px;height:18px;
+  border-radius:50%;
+  margin:1px;
+  font-size:11px;
   color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:6px;
+  line-height:18px;
 }
+.W{background:#00c853}
+.D{background:#ffab00}
+.L{background:#d50000}
 
-.reset-btn{
-  background:#d10000;
+/* ===== BUTTON ===== */
+.reset{
+  margin-top:10px;
+  background:#d32f2f;
   color:#fff;
   border:none;
   padding:10px;
+  border-radius:10px;
   width:100%;
-  margin-top:10px;
-  border-radius:6px;
 }
 </style>
 </head>
@@ -128,92 +138,156 @@ td{
 <header>🏆 eFootball League</header>
 
 <nav>
-  <button class="active" onclick="showTab('fixtures')">โปรแกรม</button>
-  <button onclick="showTab('table')">ตาราง</button>
-  <button onclick="showTab('scorer')">Top Scorer</button>
+  <button onclick="showPage('program')" class="active">โปรแกรม</button>
+  <button onclick="showPage('table')">ตาราง</button>
+  <button onclick="showPage('scorer')">Top Scorer</button>
 </nav>
 
-<!-- PROGRAM -->
-<section id="fixtures" class="active">
-  <div id="fixtureList"></div>
-  <button class="reset-btn" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
+<!-- ================= PROGRAM ================= -->
+<section id="program" class="page active">
+
+<div class="match">
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg">
+    Real Madrid
+  </div>
+  <div class="score">
+    <input id="h0"><span>-</span><input id="a0">
+  </div>
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg">
+    Man United
+  </div>
+  <button class="save-btn" onclick="saveMatch(0)">บันทึก</button>
+</div>
+
+<div class="match">
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/6/6b/Olympique_Marseille_logo.svg">
+    Marseille
+  </div>
+  <div class="score">
+    <input id="h1"><span>-</span><input id="a1">
+  </div>
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg">
+    Atletico
+  </div>
+  <button class="save-btn" onclick="saveMatch(1)">บันทึก</button>
+</div>
+
+<div class="match">
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/0/0c/AC_Milan.svg">
+    AC Milan
+  </div>
+  <div class="score">
+    <input id="h2"><span>-</span><input id="a2">
+  </div>
+  <div class="team">
+    <img src="https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg">
+    PSG
+  </div>
+  <button class="save-btn" onclick="saveMatch(2)">บันทึก</button>
+</div>
+
+<button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
 </section>
 
-<!-- TABLE -->
-<section id="table">
-  <table>
-    <thead>
-      <tr>
-        <th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
-        <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>ฟอร์ม</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
+<!-- ================= TABLE ================= -->
+<section id="table" class="page">
+<table>
+<thead>
+<tr>
+<th>#</th><th>ทีม</th><th>P</th><th>GD</th><th>Pts</th><th>ฟอร์ม 5 นัด</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
 </section>
 
-<!-- TOP SCORER -->
-<section id="scorer">
-  <ul>
-    <li>ใส่รายชื่อ Top Scorer เองได้เลย</li>
-  </ul>
+<!-- ================= SCORER ================= -->
+<section id="scorer" class="page">
+<h3>Top Scorer</h3>
+<p>⚽ คุณสามารถใส่รายชื่อเองภายหลัง</p>
+<ul>
+<li>-</li>
+<li>-</li>
+<li>-</li>
+</ul>
 </section>
 
 <script>
 const teams=[
- {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
- {name:"Manchester United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
- {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/5/5c/Olympique_Marseille_logo.svg"},
- {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
- {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
- {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
+"Real Madrid","Man United","Marseille",
+"Atletico","AC Milan","PSG"
 ];
 
-let data=JSON.parse(localStorage.getItem("league")) || initData();
+let table=JSON.parse(localStorage.getItem("table"))||teams.map(t=>({
+team:t,P:0,GF:0,GA:0,PTS:0,form:[]
+}));
 
-function initData(){
- let obj={};
- teams.forEach(t=>{
-  obj[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]};
- });
- return obj;
+function showPage(p){
+document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
+document.querySelectorAll("nav button").forEach(e=>e.classList.remove("active"));
+document.getElementById(p).classList.add("active");
+event.target.classList.add("active");
+if(p==="table") renderTable();
 }
 
-function showTab(id){
- document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- event.target.classList.add("active");
- if(id==="table") renderTable();
+function saveMatch(i){
+const h=document.getElementById("h"+i).value;
+const a=document.getElementById("a"+i).value;
+if(h===""||a==="")return;
+
+const pair=[
+["Real Madrid","Man United"],
+["Marseille","Atletico"],
+["AC Milan","PSG"]
+][i];
+
+update(pair[0],pair[1],+h,+a);
+localStorage.setItem("table",JSON.stringify(table));
+alert("บันทึกแล้ว");
+}
+
+function update(t1,t2,g1,g2){
+let A=table.find(t=>t.team===t1);
+let B=table.find(t=>t.team===t2);
+A.P++;B.P++;
+A.GF+=g1;A.GA+=g2;
+B.GF+=g2;B.GA+=g1;
+
+if(g1>g2){A.PTS+=3;A.form.unshift("W");B.form.unshift("L")}
+else if(g1<g2){B.PTS+=3;B.form.unshift("W");A.form.unshift("L")}
+else{A.PTS++;B.PTS++;A.form.unshift("D");B.form.unshift("D")}
+
+A.form=A.form.slice(0,5);
+B.form=B.form.slice(0,5);
 }
 
 function renderTable(){
- let arr=teams.map(t=>{
-  let d=data[t.name];
-  return {...t,...d,GD:d.GF-d.GA,Pts:d.W*3+d.D};
- });
- arr.sort((a,b)=>b.Pts-a.Pts || b.GD-a.GD);
- let tb=document.getElementById("tableBody");
- tb.innerHTML="";
- arr.forEach((t,i)=>{
-  let tr=document.createElement("tr");
-  if(i===0) tr.classList.add("champion");
-  if(i>=4) tr.classList.add("relegation");
-  tr.innerHTML=`
-   <td>${i+1}</td>
-   <td class="team-cell"><img src="${t.logo}">${t.name}</td>
-   <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td><td>${t.Pts}</td>
-   <td>${t.form.slice(-5).join(" ")}</td>`;
-  tb.appendChild(tr);
- });
+let body=document.getElementById("tableBody");
+body.innerHTML="";
+table.sort((a,b)=>b.PTS-a.PTS||((b.GF-b.GA)-(a.GF-a.GA)));
+table.forEach((t,i)=>{
+body.innerHTML+=`
+<tr class="${i==0?'champ':i>=4?'releg':''}">
+<td>${i+1}</td>
+<td>${t.team}</td>
+<td>${t.P}</td>
+<td>${t.GF-t.GA}</td>
+<td>${t.PTS}</td>
+<td class="form">${t.form.map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+</tr>`;
+});
 }
 
 function resetAll(){
- if(confirm("รีเซ็ตข้อมูลทั้งหมด?")){
-  localStorage.clear();
-  location.reload();
- }
+if(confirm("ล้างข้อมูลทั้งหมด?")){
+localStorage.clear();
+location.reload();
+}
 }
 </script>
 
