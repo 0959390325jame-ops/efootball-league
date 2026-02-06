@@ -1,269 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>eFootball League SS2</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root{
-  --pl-purple:#3b0057;
-  --pl-pink:#ff2e92;
-  --bg:#f5f6fa;
-}
 body{
   margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:var(--bg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background:#f6f7fb;
 }
+
 header{
-  background:linear-gradient(90deg,var(--pl-purple),var(--pl-pink));
+  background:linear-gradient(90deg,#37003c,#ff2882);
   color:#fff;
-  padding:16px;
+  padding:18px;
   text-align:center;
   font-size:22px;
-  font-weight:bold;
+  font-weight:700;
 }
-nav{
+
+.tabs{
   display:flex;
   justify-content:center;
   gap:12px;
-  margin:12px;
+  margin:16px 0;
 }
-nav button{
-  padding:8px 14px;
+
+.tabs button{
   border:none;
+  padding:10px 22px;
   border-radius:20px;
-  background:var(--pl-purple);
-  color:#fff;
+  font-size:15px;
   cursor:pointer;
+  background:#eee;
 }
-section{display:none;padding:10px;}
-section.active{display:block;}
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  font-size:14px;
-}
-th,td{
-  padding:6px;
-  text-align:center;
-  border-bottom:1px solid #ddd;
-}
-th{
-  background:var(--pl-purple);
+.tabs button.active{
+  background:#37003c;
   color:#fff;
-  font-size:13px;
 }
-.team{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.team img{
-  width:22px;
-  height:22px;
-  object-fit:contain;
-}
-.champ{background:#e7ffe7;}
-.relegate{background:#ffe7e7;}
 
-.form span{
-  display:inline-block;
-  width:18px;
-  height:18px;
-  line-height:18px;
-  border-radius:50%;
-  color:#fff;
-  font-size:11px;
+.page{
+  display:none;
+  padding:10px;
 }
-.W{background:#2ecc71;}
-.D{background:#f1c40f;}
-.L{background:#e74c3c;}
 
-.fixture{
+.page.active{
+  display:block;
+}
+
+.match{
   background:#fff;
-  margin-bottom:8px;
-  padding:8px;
-  border-radius:8px;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
+
+.team{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:40%;
+}
+
+.team img{
+  width:28px;
+  height:28px;
+}
+
+.score{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
 .score input{
-  width:36px;
-  text-align:center;
+  width:42px;
+  height:36px;
   font-size:16px;
+  text-align:center;
+  border:1px solid #ccc;
+  border-radius:8px;
 }
 
 .controls{
   display:flex;
   justify-content:space-between;
-  margin:10px 0;
+  margin:20px 10px;
 }
+
 .controls button{
-  padding:6px 12px;
-  border:none;
-  border-radius:8px;
-  background:var(--pl-purple);
+  background:#37003c;
   color:#fff;
-  cursor:pointer;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  font-size:14px;
 }
+
+.table{
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.table-header,.table-row{
+  display:grid;
+  grid-template-columns:40px 1fr 40px 40px 40px 40px 60px 80px;
+  padding:10px;
+  font-size:14px;
+  align-items:center;
+}
+
+.table-header{
+  background:#37003c;
+  color:#fff;
+  font-weight:600;
+}
+
+.table-row:nth-child(even){
+  background:#f2f2f2;
+}
+
+.form{
+  display:flex;
+  gap:3px;
+}
+
+.form span{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.W{background:#2ecc71}
+.D{background:#f1c40f}
+.L{background:#e74c3c}
 </style>
 </head>
 
 <body>
 
-<header>eFootball League SS2</header>
+<header>🏆 eFootball League SS2</header>
 
-<nav>
-  <button onclick="showPage('table')">Table</button>
-  <button onclick="showPage('fixtures')">Fixtures</button>
-</nav>
-
-<!-- TABLE -->
-<section id="table" class="active">
-<table>
-<thead>
-<tr>
-<th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
-<th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</section>
+<div class="tabs">
+  <button id="tabFixtures" class="active">Fixtures</button>
+  <button id="tabTable">Table</button>
+</div>
 
 <!-- FIXTURES -->
-<section id="fixtures">
-<div id="fixtureList"></div>
+<div id="fixturesPage" class="page active"></div>
 
 <div class="controls">
   <button onclick="prevPage()">Prev</button>
-  <button onclick="saveResults()">Save</button>
+  <button onclick="saveScores()">Save</button>
   <button onclick="resetAll()">Reset</button>
   <button onclick="nextPage()">Next</button>
 </div>
-</section>
+
+<!-- TABLE -->
+<div id="tablePage" class="page">
+  <div class="table" id="leagueTable"></div>
+</div>
 
 <script>
 const teams=[
- {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
- {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
- {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
- {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
- {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d8/Olympique_Marseille_logo.svg"},
- {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
+ {id:1,name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
+ {id:2,name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
+ {id:3,name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
+ {id:4,name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
+ {id:5,name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/1/1d/Olympique_Marseille_logo.svg"},
+ {id:6,name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-// ===== FIXTURES (45 matches, 6 per page) =====
+// generate fixtures (3 rounds)
 let fixtures=[];
-teams.forEach((a,i)=>{
- teams.forEach((b,j)=>{
-  if(i<j){
-    fixtures.push({h:a.name,a:b.name,hs:"",as:""});
-    fixtures.push({h:b.name,a:a.name,hs:"",as:""});
-    fixtures.push(Math.random()>0.5
-      ?{h:a.name,a:b.name,hs:"",as:""}
-      :{h:b.name,a:a.name,hs:"",as:""});
+teams.forEach(a=>{
+ teams.forEach(b=>{
+  if(a.id!==b.id){
+   fixtures.push({home:a,away:b,hs:"",as:""});
   }
  });
 });
 
 let page=0;
 const perPage=6;
+let locked = localStorage.getItem("efs2_locked")==="true";
 
-// ===== STORAGE =====
-const saved=JSON.parse(localStorage.getItem("efs2"))||{};
-fixtures=fixtures.map((f,i)=>saved[i]?saved[i]:f);
+const saved=JSON.parse(localStorage.getItem("efs2_scores")||"[]");
+if(saved.length) fixtures=saved;
 
-// ===== NAV =====
-function showPage(id){
- document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- render();
-}
-
-// ===== FIXTURES RENDER =====
 function renderFixtures(){
- const box=document.getElementById("fixtureList");
+ const box=document.getElementById("fixturesPage");
  box.innerHTML="";
  fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
   box.innerHTML+=`
-  <div class="fixture">
-    <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-    <div class="score">
-      <input type="number" min="0" value="${m.hs}" 
-        onchange="updateScore(${page*perPage+i},'hs',this.value)">
-      -
-      <input type="number" min="0" value="${m.as}" 
-        onchange="updateScore(${page*perPage+i},'as',this.value)">
+  <div class="match">
+    <div class="team">
+      <img src="${m.home.logo}">${m.home.name}
     </div>
-    <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
+    <div class="score">
+      <input ${locked?"disabled":""} value="${m.hs}" oninput="fixtures[${page*perPage+i}].hs=this.value">
+      -
+      <input ${locked?"disabled":""} value="${m.as}" oninput="fixtures[${page*perPage+i}].as=this.value">
+    </div>
+    <div class="team" style="justify-content:flex-end">
+      ${m.away.name}<img src="${m.away.logo}">
+    </div>
   </div>`;
  });
 }
 
-// ===== TABLE =====
-function renderTable(){
+function saveScores(){
+ if(locked) return alert("Scores already saved");
+ localStorage.setItem("efs2_scores",JSON.stringify(fixtures));
+ localStorage.setItem("efs2_locked","true");
+ locked=true;
+ renderFixtures();
+ alert("Saved successfully");
+}
+
+function resetAll(){
+ if(!confirm("Reset all data?"))return;
+ localStorage.clear();
+ location.reload();
+}
+
+function prevPage(){ if(page>0){page--;renderFixtures();}}
+function nextPage(){ if((page+1)*perPage<fixtures.length){page++;renderFixtures();}}
+
+document.getElementById("tabFixtures").onclick=()=>{
+ document.getElementById("fixturesPage").classList.add("active");
+ document.getElementById("tablePage").classList.remove("active");
+ tabFixtures.classList.add("active");
+ tabTable.classList.remove("active");
+};
+
+document.getElementById("tabTable").onclick=()=>{
+ document.getElementById("fixturesPage").classList.remove("active");
+ document.getElementById("tablePage").classList.add("active");
+ tabFixtures.classList.remove("active");
+ tabTable.classList.add("active");
+ buildTable();
+};
+
+function buildTable(){
+ const table=document.getElementById("leagueTable");
  let stats={};
- teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
+ teams.forEach(t=>stats[t.id]={t,pts:0,p:0,w:0,d:0,l:0,gd:0,form:[]});
 
  fixtures.forEach(m=>{
-  if(m.hs!=="" && m.as!==""){
-   let h=stats[m.h], a=stats[m.a];
-   let hs=+m.hs, as=+m.as;
-   h.P++; a.P++;
-   h.GF+=hs; h.GA+=as;
-   a.GF+=as; a.GA+=hs;
-   if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
-   else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
-   else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
+  if(m.hs!==""&&m.as!==""){
+   const h=stats[m.home.id], a=stats[m.away.id];
+   const hs=+m.hs, as=+m.as;
+   h.p++;a.p++;
+   h.gd+=hs-as;a.gd+=as-hs;
+   if(hs>as){h.w++;a.l++;h.pts+=3;h.form.unshift("W");a.form.unshift("L")}
+   else if(hs<as){a.w++;h.l++;a.pts+=3;a.form.unshift("W");h.form.unshift("L")}
+   else{h.d++;a.d++;h.pts++;a.pts++;h.form.unshift("D");a.form.unshift("D")}
   }
  });
 
- let arr=Object.keys(stats).map(k=>{
-  let s=stats[k];
-  return {...s,name:k,GD:s.GF-s.GA,Pts:s.W*3+s.D};
- }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
-
- let body=document.getElementById("tableBody");
- body.innerHTML="";
- arr.forEach((t,i)=>{
-  body.innerHTML+=`
-  <tr class="${i==0?'champ':i>=4?'relegate':''}">
-   <td>${i+1}</td>
-   <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
-   <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
-   <td><b>${t.Pts}</b></td>
-   <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
-  </tr>`;
+ const rows=Object.values(stats).sort((a,b)=>b.pts-a.pts||b.gd-a.gd);
+ table.innerHTML=`
+ <div class="table-header">
+  <div>#</div><div>Club</div><div>P</div><div>W</div><div>D</div><div>L</div><div>GD</div><div>Form</div>
+ </div>`;
+ rows.forEach((r,i)=>{
+  table.innerHTML+=`
+  <div class="table-row">
+   <div>${i+1}</div>
+   <div style="display:flex;align-items:center;gap:6px">
+    <img src="${r.t.logo}" width="22">${r.t.name}
+   </div>
+   <div>${r.p}</div><div>${r.w}</div><div>${r.d}</div><div>${r.l}</div>
+   <div>${r.gd}</div>
+   <div class="form">${r.form.slice(0,5).map(f=>`<span class="${f}"></span>`).join("")}</div>
+  </div>`;
  });
 }
 
-// ===== HELPERS =====
-function getLogo(name){
- return teams.find(t=>t.name==name).logo;
-}
-function updateScore(i,k,v){fixtures[i][k]=v;}
-function saveResults(){
- localStorage.setItem("efs2",JSON.stringify(fixtures));
- alert("Saved!");
-}
-function resetAll(){
- if(confirm("Reset all data?")){
-  localStorage.removeItem("efs2");
-  location.reload();
- }
-}
-function nextPage(){if((page+1)*perPage<fixtures.length){page++;render();}}
-function prevPage(){if(page>0){page--;render();}}
-function render(){renderFixtures();renderTable();}
-
-render();
+renderFixtures();
 </script>
 
 </body>
