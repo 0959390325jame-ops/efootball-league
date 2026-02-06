@@ -2,46 +2,50 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>eFootball Premier League</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f4f4}
 header{
-  background:linear-gradient(90deg,#37003c,#6a1b9a);
-  color:#fff;padding:15px;text-align:center;font-size:20px;font-weight:bold
+ background:linear-gradient(90deg,#37003c,#6a1b9a);
+ color:#fff;padding:15px;text-align:center;
+ font-size:20px;font-weight:bold
 }
 .container{padding:15px;max-width:1000px;margin:auto}
-h2{margin-top:30px}
+h2{margin-top:25px}
 
 /* ตารางคะแนน */
 table{width:100%;border-collapse:collapse;background:#fff}
 th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
 th{background:#37003c;color:#fff}
-.team{
-  display:flex;align-items:center;gap:8px;justify-content:left
-}
+.team{display:flex;align-items:center;gap:8px}
 .team img{width:22px}
 
 /* ไฮไลต์ */
 .leader{background:#e1bee7;font-weight:bold}
 .relegation{background:#ffcdd2}
 
-/* แมตช์ */
+/* โปรแกรม */
 .match{
-  background:#fff;padding:10px;margin-bottom:10px;
-  border-radius:8px;display:flex;align-items:center;
-  justify-content:space-between;gap:10px
+ background:#fff;padding:10px;margin-bottom:10px;
+ border-radius:8px;display:flex;
+ align-items:center;justify-content:space-between;gap:8px
 }
 .score input{
-  width:40px;text-align:center;font-size:16px
+ width:40px;text-align:center;font-size:16px
 }
 button{
-  background:#00c853;color:#fff;border:none;
-  padding:6px 12px;border-radius:5px;cursor:pointer
+ background:#00c853;color:#fff;border:none;
+ padding:6px 10px;border-radius:5px;cursor:pointer
 }
-.reset{background:#d50000;margin-bottom:15px}
-.small{font-size:12px;color:#666}
+button:disabled{background:#999}
+.nav{
+ display:flex;justify-content:space-between;margin:15px 0
+}
+.reset{background:#d50000}
 </style>
 </head>
 
@@ -64,7 +68,14 @@ button{
 <tbody id="tableBody"></tbody>
 </table>
 
-<h2>⚽ กรอกผลการแข่งขัน</h2>
+<h2>⚽ โปรแกรมการแข่งขัน</h2>
+
+<div class="nav">
+ <button onclick="prevPage()">◀ ก่อนหน้า</button>
+ <div id="pageInfo"></div>
+ <button onclick="nextPage()">ถัดไป ▶</button>
+</div>
+
 <div id="fixtures"></div>
 
 </div>
@@ -79,29 +90,34 @@ const teams=[
  {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-let table=teams.map(t=>({
- ...t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0
-}));
+// โหลดข้อมูลจาก localStorage
+let table = JSON.parse(localStorage.getItem("table")) ||
+teams.map(t=>({...t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0}));
 
-// 3 นัด / ทีม | เหย้า-เยือน | วันละ 2 แมตช์
 const fixtures=[
- [0,1],[1,0],
- [0,2],
- [3,4],[4,3],
- [5,0],
- [1,2],[2,1],
- [3,5],
- [4,5]
+ [0,1],[1,0],[0,2],[2,0],[0,3],[3,0],
+ [1,2],[2,1],[1,3],[3,1],[1,4],[4,1],
+ [2,3],[3,2],[2,4],[4,2],[2,5],[5,2]
 ];
+
+let played = JSON.parse(localStorage.getItem("played")) ||
+new Array(fixtures.length).fill(false);
+
+let page = JSON.parse(localStorage.getItem("page")) || 0;
+const perPage=6;
+
+function saveData(){
+ localStorage.setItem("table",JSON.stringify(table));
+ localStorage.setItem("played",JSON.stringify(played));
+ localStorage.setItem("page",page);
+}
 
 function renderTable(){
  const body=document.getElementById("tableBody");
  body.innerHTML="";
  table.sort((a,b)=>b.PTS-a.PTS||b.GD-a.GD||b.GF-a.GF);
  table.forEach((t,i)=>{
-  let cls="";
-  if(i===0)cls="leader";
-  if(i>=4)cls="relegation";
+  let cls=i===0?"leader":i>=4?"relegation":"";
   body.innerHTML+=`
   <tr class="${cls}">
    <td>${i+1}</td>
@@ -116,24 +132,33 @@ function renderTable(){
 function renderFixtures(){
  const box=document.getElementById("fixtures");
  box.innerHTML="";
- fixtures.forEach((f,i)=>{
+ const start=page*perPage;
+ const end=Math.min(start+perPage,fixtures.length);
+
+ document.getElementById("pageInfo").innerText=
+  `หน้า ${page+1} / ${Math.ceil(fixtures.length/perPage)}`;
+
+ for(let i=start;i<end;i++){
+  const f=fixtures[i];
   box.innerHTML+=`
   <div class="match">
    <div class="team"><img src="${teams[f[0]].logo}">${teams[f[0]].name}</div>
    <div class="score">
-    <input type="number" min="0" id="h${i}"> -
-    <input type="number" min="0" id="a${i}">
+    <input type="number" min="0" id="h${i}" ${played[i]?"disabled":""}> -
+    <input type="number" min="0" id="a${i}" ${played[i]?"disabled":""}>
    </div>
    <div class="team">${teams[f[1]].name}<img src="${teams[f[1]].logo}"></div>
-   <button onclick="saveMatch(${i})">บันทึก</button>
+   <button onclick="saveMatch(${i})" ${played[i]?"disabled":""}>บันทึก</button>
   </div>`;
- });
+ }
 }
 
 function saveMatch(i){
+ if(played[i]) return;
+
  const h=document.getElementById("h"+i).value;
  const a=document.getElementById("a"+i).value;
- if(h===""||a==="")return;
+ if(h===""||a==="") return;
 
  const home=table[fixtures[i][0]];
  const away=table[fixtures[i][1]];
@@ -149,14 +174,27 @@ function saveMatch(i){
  home.GD=home.GF-home.GA;
  away.GD=away.GF-away.GA;
 
+ played[i]=true;
+ saveData();
  renderTable();
+ renderFixtures();
+}
+
+function nextPage(){
+ if((page+1)*perPage<fixtures.length){
+  page++; saveData(); renderFixtures();
+ }
+}
+function prevPage(){
+ if(page>0){
+  page--; saveData(); renderFixtures();
+ }
 }
 
 function resetLeague(){
- table.forEach(t=>{
-  t.P=t.W=t.D=t.L=t.GF=t.GA=t.GD=t.PTS=0;
- });
- renderTable();
+ if(!confirm("รีเซ็ตข้อมูลทั้งหมด?")) return;
+ localStorage.clear();
+ location.reload();
 }
 
 renderTable();
