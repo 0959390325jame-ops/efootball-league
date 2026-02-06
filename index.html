@@ -6,97 +6,42 @@
 <title>eFootball Premier League</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f4f4;
-  margin:0;
+body{margin:0;font-family:Arial;background:#f4f4f4}
+header{
+  background:linear-gradient(90deg,#37003c,#6a1b9a);
+  color:#fff;padding:15px;text-align:center;font-size:20px;font-weight:bold
 }
+.container{padding:15px;max-width:1000px;margin:auto}
+h2{margin-top:30px}
 
-header {
-  background: linear-gradient(90deg,#37003c,#8a005c);
-  color:#fff;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  text-align:center;
+/* ตารางคะแนน */
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
+th{background:#37003c;color:#fff}
+.team{
+  display:flex;align-items:center;gap:8px;justify-content:left
 }
+.team img{width:22px}
 
-.container {
-  padding:15px;
-}
+/* ไฮไลต์ */
+.leader{background:#e1bee7;font-weight:bold}
+.relegation{background:#ffcdd2}
 
-h2 {
-  margin-top:20px;
+/* แมตช์ */
+.match{
+  background:#fff;padding:10px;margin-bottom:10px;
+  border-radius:8px;display:flex;align-items:center;
+  justify-content:space-between;gap:10px
 }
-
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
+.score input{
+  width:40px;text-align:center;font-size:16px
 }
-
-th {
-  background:#37003c;
-  color:#fff;
-  padding:10px;
-  font-size:14px;
+button{
+  background:#00c853;color:#fff;border:none;
+  padding:6px 12px;border-radius:5px;cursor:pointer
 }
-
-td {
-  padding:10px;
-  border-bottom:1px solid #eee;
-  text-align:center;
-}
-
-.team {
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.team img {
-  width:26px;
-  height:26px;
-  object-fit:contain;
-}
-
-.match {
-  background:#fff;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-
-.match img {
-  width:24px;
-  height:24px;
-}
-
-input {
-  width:40px;
-  text-align:center;
-  padding:4px;
-}
-
-button {
-  background:#00c853;
-  color:#fff;
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.reset {
-  background:#d50000;
-  margin-bottom:15px;
-}
+.reset{background:#d50000;margin-bottom:15px}
+.small{font-size:12px;color:#666}
 </style>
 </head>
 
@@ -112,7 +57,8 @@ button {
 <table>
 <thead>
 <tr>
-<th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+<th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
+<th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
@@ -124,7 +70,7 @@ button {
 </div>
 
 <script>
-const teams = [
+const teams=[
  {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
  {name:"Manchester United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
  {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg"},
@@ -133,73 +79,88 @@ const teams = [
  {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-teams.forEach(t=>{
-  t.p=t.w=t.d=t.l=t.gf=t.ga=t.pts=0;
-});
+let table=teams.map(t=>({
+ ...t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0
+}));
+
+// 3 นัด / ทีม | เหย้า-เยือน | วันละ 2 แมตช์
+const fixtures=[
+ [0,1],[1,0],
+ [0,2],
+ [3,4],[4,3],
+ [5,0],
+ [1,2],[2,1],
+ [3,5],
+ [4,5]
+];
 
 function renderTable(){
-  const body=document.getElementById("tableBody");
-  body.innerHTML="";
-  teams.sort((a,b)=>b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga));
-  teams.forEach((t,i)=>{
-    body.innerHTML+=`
-    <tr>
-      <td>${i+1}</td>
-      <td class="team"><img src="${t.logo}">${t.name}</td>
-      <td>${t.p}</td>
-      <td>${t.w}</td>
-      <td>${t.d}</td>
-      <td>${t.l}</td>
-      <td>${t.gf}</td>
-      <td>${t.ga}</td>
-      <td>${t.gf-t.ga}</td>
-      <td><b>${t.pts}</b></td>
-    </tr>`;
-  });
+ const body=document.getElementById("tableBody");
+ body.innerHTML="";
+ table.sort((a,b)=>b.PTS-a.PTS||b.GD-a.GD||b.GF-a.GF);
+ table.forEach((t,i)=>{
+  let cls="";
+  if(i===0)cls="leader";
+  if(i>=4)cls="relegation";
+  body.innerHTML+=`
+  <tr class="${cls}">
+   <td>${i+1}</td>
+   <td class="team"><img src="${t.logo}">${t.name}</td>
+   <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
+   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
+   <td>${t.PTS}</td>
+  </tr>`;
+ });
 }
 
-function createFixtures(){
-  const f=document.getElementById("fixtures");
-  for(let i=0;i<teams.length;i++){
-    for(let j=i+1;j<teams.length;j++){
-      f.innerHTML+=`
-      <div class="match">
-        <span class="team"><img src="${teams[i].logo}">${teams[i].name}</span>
-        <input id="a${i}${j}"> -
-        <input id="b${i}${j}">
-        <span class="team"><img src="${teams[j].logo}">${teams[j].name}</span>
-        <button onclick="saveMatch(${i},${j})">บันทึก</button>
-      </div>`;
-    }
-  }
+function renderFixtures(){
+ const box=document.getElementById("fixtures");
+ box.innerHTML="";
+ fixtures.forEach((f,i)=>{
+  box.innerHTML+=`
+  <div class="match">
+   <div class="team"><img src="${teams[f[0]].logo}">${teams[f[0]].name}</div>
+   <div class="score">
+    <input type="number" min="0" id="h${i}"> -
+    <input type="number" min="0" id="a${i}">
+   </div>
+   <div class="team">${teams[f[1]].name}<img src="${teams[f[1]].logo}"></div>
+   <button onclick="saveMatch(${i})">บันทึก</button>
+  </div>`;
+ });
 }
 
-function saveMatch(i,j){
-  const a=parseInt(document.getElementById(`a${i}${j}`).value);
-  const b=parseInt(document.getElementById(`b${i}${j}`).value);
-  if(isNaN(a)||isNaN(b))return;
+function saveMatch(i){
+ const h=document.getElementById("h"+i).value;
+ const a=document.getElementById("a"+i).value;
+ if(h===""||a==="")return;
 
-  const A=teams[i],B=teams[j];
-  A.p++;B.p++;
-  A.gf+=a;A.ga+=b;
-  B.gf+=b;B.ga+=a;
+ const home=table[fixtures[i][0]];
+ const away=table[fixtures[i][1]];
 
-  if(a>b){A.w++;A.pts+=3;B.l++;}
-  else if(b>a){B.w++;B.pts+=3;A.l++;}
-  else{A.d++;B.d++;A.pts++;B.pts++;}
+ home.P++;away.P++;
+ home.GF+=+h;home.GA+=+a;
+ away.GF+=+a;away.GA+=+h;
 
-  renderTable();
+ if(h>a){home.W++;home.PTS+=3;away.L++}
+ else if(h<a){away.W++;away.PTS+=3;home.L++}
+ else{home.D++;away.D++;home.PTS++;away.PTS++}
+
+ home.GD=home.GF-home.GA;
+ away.GD=away.GF-away.GA;
+
+ renderTable();
 }
 
 function resetLeague(){
-  teams.forEach(t=>{
-    t.p=t.w=t.d=t.l=t.gf=t.ga=t.pts=0;
-  });
-  renderTable();
+ table.forEach(t=>{
+  t.P=t.W=t.D=t.L=t.GF=t.GA=t.GD=t.PTS=0;
+ });
+ renderTable();
 }
 
 renderTable();
-createFixtures();
+renderFixtures();
 </script>
 
 </body>
