@@ -13,7 +13,7 @@
 }
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   background:var(--bg);
 }
 header{
@@ -31,28 +31,24 @@ nav{
   margin:12px;
 }
 nav button{
-  padding:8px 18px;
+  padding:8px 16px;
   border:none;
   border-radius:20px;
   background:var(--pl-purple);
   color:#fff;
+  cursor:pointer;
 }
+section{display:none;padding:10px;}
+section.active{display:block;}
 
-/* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
   background:#fff;
-  font-size:13px;
-  table-layout:fixed;
+  font-size:14px;
 }
-col.rank{width:32px}
-col.club{width:150px}
-col.small{width:34px}
-col.form{width:90px}
-
 th,td{
-  padding:6px 4px;
+  padding:6px;
   text-align:center;
   border-bottom:1px solid #ddd;
 }
@@ -64,61 +60,54 @@ th{
   display:flex;
   align-items:center;
   gap:6px;
-  white-space:nowrap;
 }
 .team img{
   width:22px;
   height:22px;
+  object-fit:contain;
 }
-.form{
-  white-space:nowrap;
-}
+
+.champ{background:#e7ffe7;}
+.relegate{background:#ffe7e7;}
+
 .form span{
   display:inline-block;
-  width:16px;
-  height:16px;
-  line-height:16px;
+  width:18px;
+  height:18px;
+  line-height:18px;
   border-radius:50%;
   color:#fff;
-  font-size:10px;
-  margin-right:2px;
+  font-size:11px;
+  margin:0 1px;
 }
-.W{background:#2ecc71}
-.D{background:#f1c40f}
-.L{background:#e74c3c}
-.champ{background:#e8fff0}
-.relegate{background:#ffecec}
-
-/* ===== FIXTURES ===== */
-section{display:none;padding:10px}
-section.active{display:block}
+.W{background:#2ecc71;}
+.D{background:#f1c40f;}
+.L{background:#e74c3c;}
 
 .fixture{
   background:#fff;
   margin-bottom:8px;
-  padding:8px;
+  padding:10px;
   border-radius:10px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:6px;
 }
 .score{
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:6px;
 }
 .score input{
-  width:38px;
-  height:28px;
+  width:42px;
   text-align:center;
-  font-size:15px;
+  font-size:16px;
 }
 
 .controls{
   display:flex;
   justify-content:space-between;
-  margin-top:10px;
+  margin:12px 0;
 }
 .controls button{
   padding:8px 14px;
@@ -126,6 +115,7 @@ section.active{display:block}
   border-radius:10px;
   background:var(--pl-purple);
   color:#fff;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -135,49 +125,36 @@ section.active{display:block}
 <header>🏆 eFootball League SS2</header>
 
 <nav>
-  <button onclick="showPage('fixtures')">Fixtures</button>
   <button onclick="showPage('table')">Table</button>
+  <button onclick="showPage('fixtures')">Fixtures</button>
 </nav>
 
-<!-- FIXTURES -->
-<section id="fixtures" class="active">
-  <div id="fixtureList"></div>
-  <div class="controls">
-    <button onclick="prevPage()">Prev</button>
-    <button onclick="saveResults()">Save</button>
-    <button onclick="resetAll()">Reset</button>
-    <button onclick="nextPage()">Next</button>
-  </div>
-</section>
-
 <!-- TABLE -->
-<section id="table">
+<section id="table" class="active">
 <table>
-<colgroup>
-  <col class="rank">
-  <col class="club">
-  <col class="small"><col class="small"><col class="small"><col class="small">
-  <col class="small"><col class="small"><col class="small">
-  <col class="small">
-  <col class="form">
-</colgroup>
 <thead>
 <tr>
-  <th>#</th>
-  <th>Club</th>
-  <th>P</th>
-  <th>W</th>
-  <th>D</th>
-  <th>L</th>
-  <th>GF</th>
-  <th>GA</th>
-  <th>GD</th>
-  <th>Pts</th>
-  <th>Form</th>
+<th>#</th>
+<th>Club</th>
+<th>P</th><th>W</th><th>D</th><th>L</th>
+<th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+<th>Form</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+</section>
+
+<!-- FIXTURES -->
+<section id="fixtures">
+<div id="fixtureList"></div>
+
+<div class="controls">
+  <button onclick="prevPage()">Prev</button>
+  <button onclick="saveResults()">Save</button>
+  <button onclick="resetAll()">Reset</button>
+  <button onclick="nextPage()">Next</button>
+</div>
 </section>
 
 <script>
@@ -190,68 +167,83 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ===== FIXTURES (LOCKED ORDER) ===== */
-const savedFixtures = JSON.parse(localStorage.getItem("efs2_fixtures"));
-let fixtures = savedFixtures || [
-  {h:"Man United",a:"AC Milan",hs:"",as:""},
-  {h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
-  {h:"Marseille",a:"PSG",hs:"",as:""},
+// ===== FIXTURES 3 ROUNDS =====
+let fixtures=[];
+teams.forEach((a,i)=>{
+ teams.forEach((b,j)=>{
+  if(i<j){
+   fixtures.push({h:a.name,a:b.name,hs:"",as:"",locked:false});
+   fixtures.push({h:b.name,a:a.name,hs:"",as:"",locked:false});
+   fixtures.push(Math.random()>0.5
+     ?{h:a.name,a:b.name,hs:"",as:"",locked:false}
+     :{h:b.name,a:a.name,hs:"",as:"",locked:false});
+  }
+ });
+});
 
-  {h:"AC Milan",a:"Man United",hs:"",as:""},
-  {h:"Real Madrid",a:"Atletico Madrid",hs:"",as:""},
-  {h:"PSG",a:"Marseille",hs:"",as:""},
-
-  {h:"Man United",a:"Real Madrid",hs:"",as:""},
-  {h:"AC Milan",a:"PSG",hs:"",as:""},
-  {h:"Atletico Madrid",a:"Marseille",hs:"",as:""},
-
-  {h:"Real Madrid",a:"Man United",hs:"",as:""},
-  {h:"PSG",a:"AC Milan",hs:"",as:""},
-  {h:"Marseille",a:"Atletico Madrid",hs:"",as:""}
-];
-
-localStorage.setItem("efs2_fixtures",JSON.stringify(fixtures));
-
-let page=0;
 const perPage=6;
+let page=0;
 
-/* NAV */
+// ===== LOAD STORAGE =====
+const saved=JSON.parse(localStorage.getItem("efs2"))||null;
+if(saved) fixtures=saved;
+
+// ===== NAV =====
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  render();
 }
 
-/* FIXTURES */
+// ===== FIXTURES =====
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
+
  fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
+  const idx=page*perPage+i;
+  const lock=m.locked?"disabled":"";
+
   box.innerHTML+=`
   <div class="fixture">
     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+
     <div class="score">
-      <input type="number" min="0" value="${m.hs}" onchange="updateScore(${page*perPage+i},'hs',this.value)">
-      <b>-</b>
-      <input type="number" min="0" value="${m.as}" onchange="updateScore(${page*perPage+i},'as',this.value)">
+      <input type="number" min="0" value="${m.hs}" ${lock}
+        onchange="updateScore(${idx},'hs',this.value)">
+      -
+      <input type="number" min="0" value="${m.as}" ${lock}
+        onchange="updateScore(${idx},'as',this.value)">
     </div>
+
     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
   </div>`;
  });
 }
 
-/* TABLE */
+// ===== UPDATE SCORE (LOCK ONCE) =====
+function updateScore(i,k,v){
+ fixtures[i][k]=v;
+ if(fixtures[i].hs!=="" && fixtures[i].as!==""){
+  fixtures[i].locked=true;
+ }
+ renderTable();
+}
+
+// ===== TABLE =====
 function renderTable(){
  let stats={};
  teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
 
  fixtures.forEach(m=>{
-  if(m.hs!==""&&m.as!==""){
+  if(m.hs!=="" && m.as!==""){
    let h=stats[m.h], a=stats[m.a];
    let hs=+m.hs, as=+m.as;
+
    h.P++; a.P++;
    h.GF+=hs; h.GA+=as;
    a.GF+=as; a.GA+=hs;
+
    if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
    else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
    else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
@@ -261,33 +253,34 @@ function renderTable(){
  let arr=Object.keys(stats).map(n=>{
   let s=stats[n];
   return {...s,name:n,GD:s.GF-s.GA,Pts:s.W*3+s.D};
- }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF);
+ }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
 
  let body=document.getElementById("tableBody");
  body.innerHTML="";
  arr.forEach((t,i)=>{
   body.innerHTML+=`
   <tr class="${i==0?'champ':i>=4?'relegate':''}">
-    <td>${i+1}</td>
-    <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
-    <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-    <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
-    <td><b>${t.Pts}</b></td>
-    <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+   <td>${i+1}</td>
+   <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
+   <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
+   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
+   <td><b>${t.Pts}</b></td>
+   <td class="form">
+    ${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}
+   </td>
   </tr>`;
  });
 }
 
-/* HELPERS */
+// ===== HELPERS =====
 function getLogo(n){return teams.find(t=>t.name==n).logo;}
-function updateScore(i,k,v){fixtures[i][k]=v;}
 function saveResults(){
  localStorage.setItem("efs2",JSON.stringify(fixtures));
- alert("Saved");
+ alert("Saved!");
 }
 function resetAll(){
  if(confirm("Reset all data?")){
-  localStorage.clear();
+  localStorage.removeItem("efs2");
   location.reload();
  }
 }
