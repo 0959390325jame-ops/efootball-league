@@ -2,41 +2,146 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>eFootball League</title>
+<title>Premier League Style League</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body{margin:0;font-family:Arial;background:#f2f2f2}
-header{background:linear-gradient(90deg,#37003c,#6f1d7a);color:#fff;padding:16px;text-align:center;font-size:22px}
-nav{display:flex;background:#fff}
-nav button{flex:1;padding:12px;border:none;background:#fff;font-size:16px}
-nav button.active{border-bottom:3px solid #37003c;color:#37003c;font-weight:bold}
-section{padding:10px}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f5f5
+}
 
-.match{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;
-display:flex;align-items:center;justify-content:space-between}
-.team{display:flex;align-items:center;gap:6px;width:40%}
+/* ===== HEADER ===== */
+header{
+  background:#37003c;
+  color:#fff;
+  padding:18px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+}
+
+/* ===== NAV ===== */
+nav{
+  display:flex;
+  background:#fff;
+}
+nav button{
+  flex:1;
+  padding:14px;
+  border:none;
+  background:#fff;
+  font-size:16px;
+}
+nav button.active{
+  border-bottom:4px solid #37003c;
+  color:#37003c;
+  font-weight:bold;
+}
+
+/* ===== SECTIONS ===== */
+section{padding:12px}
+
+/* ===== MATCH CARD ===== */
+.match{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.team{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  width:38%;
+}
 .team img{width:26px}
-.score input{width:40px;text-align:center}
-.save{background:#28a745;color:#fff;border:none;padding:6px 12px;border-radius:6px}
-.reset{background:#dc3545;color:#fff;border:none;padding:12px;width:100%;border-radius:10px;margin-top:12px}
 
-table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
-th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
-th{background:#37003c;color:#fff}
-.teamcell{display:flex;align-items:center;gap:6px}
+.score input{
+  width:44px;
+  font-size:16px;
+  text-align:center;
+}
+
+.save{
+  background:#00a650;
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+}
+
+.reset{
+  margin-top:12px;
+  width:100%;
+  background:#c8102e;
+  color:#fff;
+  border:none;
+  padding:14px;
+  border-radius:12px;
+  font-size:16px;
+}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  font-size:14px;
+}
+th{
+  background:#37003c;
+  color:#fff;
+  padding:10px;
+}
+td{
+  padding:8px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+}
+.teamcell{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
 .teamcell img{width:22px}
-.champion{background:#d4f8d4}
-.relegation{background:#ffd6d6}
-.controls{display:flex;gap:10px;margin-bottom:10px}
+
+/* ===== ZONES ===== */
+.champion{background:#e6ffe6}
+.relegation{background:#ffe6e6}
+
+/* ===== FORM ===== */
+.form{
+  display:flex;
+  gap:3px;
+  justify-content:center;
+}
+.form span{
+  width:18px;
+  height:18px;
+  border-radius:4px;
+  color:#fff;
+  font-size:12px;
+  line-height:18px;
+  text-align:center;
+}
+.W{background:#00a650}
+.D{background:#76766f}
+.L{background:#c8102e}
 </style>
 </head>
+
 <body>
 
-<header>🏆 eFootball League</header>
+<header>Premier League Simulator</header>
 
 <nav>
-  <button id="tabFixtures" class="active">Fixtures</button>
-  <button id="tabTable">Table</button>
+  <button id="btnFixtures" class="active">Fixtures</button>
+  <button id="btnTable">Table</button>
 </nav>
 
 <section id="fixtures"></section>
@@ -45,12 +150,8 @@ th{background:#37003c;color:#fff}
 <script>
 /* ===== TEAMS ===== */
 const teams=[
-"Manchester United",
-"AC Milan",
-"Atletico Madrid",
-"Real Madrid",
-"Marseille",
-"Paris SG"
+"Manchester United","AC Milan","Atletico Madrid",
+"Real Madrid","Marseille","Paris SG"
 ];
 
 const logos={
@@ -82,110 +183,108 @@ const fixtures=[
 ["Manchester United","Paris SG"],["AC Milan","Atletico Madrid"],["Real Madrid","Marseille"]
 ];
 
-/* ===== STORAGE ===== */
-let results = JSON.parse(localStorage.getItem("results")) || {};
-let saved = localStorage.getItem("saved")==="yes";
+let results=JSON.parse(localStorage.getItem("results"))||{};
 
-/* ===== FIXTURES PAGE ===== */
+/* ===== FIXTURES ===== */
 function renderFixtures(){
   let html="";
   fixtures.forEach((m,i)=>{
-    const key=i;
-    const r=results[key]||{};
+    const r=results[i]||{};
+    const locked=r.saved;
     html+=`
     <div class="match">
       <div class="team"><img src="${logos[m[0]]}">${m[0]}</div>
       <div class="score">
-        <input type="number" min="0" ${saved?"disabled":""} value="${r.h||""}">
+        <input type="number" min="0" ${locked?"disabled":""} value="${r.h??""}">
         -
-        <input type="number" min="0" ${saved?"disabled":""} value="${r.a||""}">
+        <input type="number" min="0" ${locked?"disabled":""} value="${r.a??""}">
       </div>
       <div class="team"><img src="${logos[m[1]]}">${m[1]}</div>
-      ${saved?"":"<button class='save' onclick='saveMatch("+i+")'>Save</button>"}
+      ${locked?"":"<button class='save' onclick='saveMatch("+i+")'>Save</button>"}
     </div>`;
   });
-  if(!saved){
-    html+=`<button class="reset" onclick="resetAll()">Reset All</button>`;
-  }
-  document.getElementById("fixtures").innerHTML=html;
+  html+=`<button class="reset" onclick="resetAll()">Reset All</button>`;
+  fixturesDiv.innerHTML=html;
 }
 
-/* ===== SAVE ===== */
+/* ===== SAVE MATCH ===== */
 function saveMatch(i){
   const box=document.querySelectorAll(".match")[i];
-  const inputs=box.querySelectorAll("input");
-  if(inputs[0].value===""||inputs[1].value==="")return;
-  results[i]={h:+inputs[0].value,a:+inputs[1].value};
+  const inp=box.querySelectorAll("input");
+  if(inp[0].value===""||inp[1].value==="")return;
+  results[i]={h:+inp[0].value,a:+inp[1].value,saved:true};
   localStorage.setItem("results",JSON.stringify(results));
-  if(Object.keys(results).length===fixtures.length){
-    saved=true;
-    localStorage.setItem("saved","yes");
-  }
   renderFixtures();renderTable();
 }
 
 /* ===== RESET ===== */
 function resetAll(){
-  localStorage.clear();
-  location.reload();
+  localStorage.clear();location.reload();
+}
+
+/* ===== FORM 5 ===== */
+function getForm(team){
+  let f=[];
+  Object.keys(results).reverse().forEach(i=>{
+    if(f.length>=5)return;
+    const [h,a]=fixtures[i];
+    const r=results[i];
+    if(h===team){
+      f.push(r.h>r.a?"W":r.h<r.a?"L":"D");
+    }
+    if(a===team){
+      f.push(r.a>r.h?"W":r.a<r.h?"L":"D");
+    }
+  });
+  return f;
 }
 
 /* ===== TABLE ===== */
 function renderTable(){
-  let table={};
-  teams.forEach(t=>table[t]={P:0,W:0,D:0,L:0,GF:0,GA:0,PTS:0});
+  let t={};
+  teams.forEach(x=>t[x]={P:0,W:0,D:0,L:0,GF:0,GA:0,PTS:0});
   Object.keys(results).forEach(i=>{
-    const [h,a]=fixtures[i];
-    const r=results[i];
-    table[h].P++;table[a].P++;
-    table[h].GF+=r.h;table[h].GA+=r.a;
-    table[a].GF+=r.a;table[a].GA+=r.h;
-    if(r.h>r.a){table[h].W++;table[h].PTS+=3;table[a].L++;}
-    else if(r.h<r.a){table[a].W++;table[a].PTS+=3;table[h].L++;}
-    else{table[h].D++;table[a].D++;table[h].PTS++;table[a].PTS++;}
+    const [h,a]=fixtures[i];const r=results[i];
+    t[h].P++;t[a].P++;
+    t[h].GF+=r.h;t[h].GA+=r.a;
+    t[a].GF+=r.a;t[a].GA+=r.h;
+    if(r.h>r.a){t[h].W++;t[h].PTS+=3;t[a].L++;}
+    else if(r.h<r.a){t[a].W++;t[a].PTS+=3;t[h].L++;}
+    else{t[h].D++;t[a].D++;t[h].PTS++;t[a].PTS++;}
   });
 
-  let rows=Object.entries(table).sort((a,b)=>{
+  let rows=Object.entries(t).sort((a,b)=>{
     if(b[1].PTS!==a[1].PTS)return b[1].PTS-a[1].PTS;
     return (b[1].GF-b[1].GA)-(a[1].GF-a[1].GA);
   });
 
   let html=`<table>
-  <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
+  <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
+  <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th></tr>`;
+
   rows.forEach((r,i)=>{
-    const t=r[1];
     html+=`
     <tr class="${i===0?"champion":i>=4?"relegation":""}">
       <td>${i+1}</td>
       <td class="teamcell"><img src="${logos[r[0]]}">${r[0]}</td>
-      <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-      <td>${t.GF}</td><td>${t.GA}</td><td>${t.GF-t.GA}</td><td>${t.PTS}</td>
+      <td>${r[1].P}</td><td>${r[1].W}</td><td>${r[1].D}</td><td>${r[1].L}</td>
+      <td>${r[1].GF}</td><td>${r[1].GA}</td><td>${r[1].GF-r[1].GA}</td>
+      <td>${r[1].PTS}</td>
+      <td class="form">${getForm(r[0]).map(x=>`<span class="${x}">${x}</span>`).join("")}</td>
     </tr>`;
   });
   html+="</table>";
-  document.getElementById("table").innerHTML=html;
+  tableDiv.innerHTML=html;
 }
 
 /* ===== NAV ===== */
-tabFixtures.onclick=()=>{
-  fixturesDiv.style.display="block";
-  tableDiv.style.display="none";
-  tabFixtures.classList.add("active");
-  tabTable.classList.remove("active");
-};
-tabTable.onclick=()=>{
-  fixturesDiv.style.display="none";
-  tableDiv.style.display="block";
-  tabTable.classList.add("active");
-  tabFixtures.classList.remove("active");
-};
+btnFixtures.onclick=()=>{fixturesDiv.style.display="block";tableDiv.style.display="none";btnFixtures.classList.add("active");btnTable.classList.remove("active");}
+btnTable.onclick=()=>{fixturesDiv.style.display="none";tableDiv.style.display="block";btnTable.classList.add("active");btnFixtures.classList.remove("active");}
 
 const fixturesDiv=document.getElementById("fixtures");
 const tableDiv=document.getElementById("table");
 
-/* INIT */
-renderFixtures();
-renderTable();
+renderFixtures();renderTable();
 </script>
 
 </body>
