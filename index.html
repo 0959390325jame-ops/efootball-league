@@ -11,17 +11,38 @@ nav{display:flex;background:#fff}
 nav button{flex:1;padding:12px;border:none;background:#fff;font-size:16px}
 nav button.active{border-bottom:3px solid #8b008b;color:#8b008b;font-weight:bold}
 section{padding:10px}
-.match,.table-row{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+
+.match{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .team{display:flex;align-items:center;gap:8px;width:40%}
 .team img{width:28px}
 .score input{width:40px;text-align:center}
 button.save{background:#28a745;color:#fff;border:none;padding:6px 10px;border-radius:6px}
-button.reset{background:#dc3545;color:#fff;border:none;padding:10px;width:100%;border-radius:10px;margin-top:10px}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd;font-size:14px}
+
+.controls{display:flex;gap:10px;margin:10px 0}
+.controls button{flex:1;padding:10px;border:none;border-radius:8px;font-size:16px}
+.reset{background:#dc3545;color:#fff}
+
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
 th{background:#5a0066;color:#fff}
+.teamcell{display:flex;align-items:center;gap:6px;justify-content:flex-start}
+.teamcell img{width:22px}
+
 .champ{background:#d4f8d4}
 .releg{background:#ffd6d6}
+
+.form span{
+  display:inline-block;
+  width:22px;height:22px;
+  line-height:22px;
+  border-radius:50%;
+  color:#fff;
+  font-size:12px;
+  margin-right:2px;
+}
+.W{background:#28a745}
+.D{background:#999}
+.L{background:#dc3545}
 </style>
 </head>
 <body>
@@ -37,7 +58,8 @@ th{background:#5a0066;color:#fff}
 <section id="table" style="display:none"></section>
 
 <script>
-const teams = [
+/* ===== TEAMS ===== */
+const teams=[
  {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
  {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
  {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
@@ -46,8 +68,11 @@ const teams = [
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
+/* ===== INIT STORAGE ===== */
 let matches = JSON.parse(localStorage.getItem("matches"));
 let table = JSON.parse(localStorage.getItem("table"));
+let page = +localStorage.getItem("page") || 0;
+const PER_PAGE = 6;
 
 if(!matches){
   matches=[];
@@ -55,82 +80,106 @@ if(!matches){
     for(let i=0;i<teams.length;i++){
       for(let j=i+1;j<teams.length;j++){
         matches.push({
-          home:teams[i].name,
-          away:teams[j].name,
-          h:teams[i].logo,
-          a:teams[j].logo,
+          home:teams[i].name,away:teams[j].name,
+          hLogo:teams[i].logo,aLogo:teams[j].logo,
           sh:null,sa:null,saved:false
         });
       }
     }
   }
+  matches.sort(()=>Math.random()-0.5);
   localStorage.setItem("matches",JSON.stringify(matches));
 }
 
 if(!table){
   table={};
   teams.forEach(t=>{
-    table[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0,logo:t.logo};
+    table[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0,logo:t.logo,form:[]};
   });
   localStorage.setItem("table",JSON.stringify(table));
 }
 
+/* ===== PROGRAM ===== */
 function renderProgram(){
   program.innerHTML="";
-  matches.forEach((m,i)=>{
-    let div=document.createElement("div");
-    div.className="match";
-    div.innerHTML=`
-      <div class="team"><img src="${m.h}">${m.home}</div>
+  let start=page*PER_PAGE;
+  let slice=matches.slice(start,start+PER_PAGE);
+
+  slice.forEach((m,i)=>{
+    let idx=start+i;
+    program.innerHTML+=`
+    <div class="match">
+      <div class="team"><img src="${m.hLogo}">${m.home}</div>
       <div class="score">
-        <input type="number" id="h${i}" ${m.saved?"disabled":""} value="${m.sh??""}"> -
-        <input type="number" id="a${i}" ${m.saved?"disabled":""} value="${m.sa??""}">
-        <button class="save" ${m.saved?"disabled":""}>บันทึก</button>
+        <input type="number" id="h${idx}" ${m.saved?"disabled":""} value="${m.sh??""}">
+        -
+        <input type="number" id="a${idx}" ${m.saved?"disabled":""} value="${m.sa??""}">
+        <button class="save" ${m.saved?"disabled":""} onclick="saveMatch(${idx})">บันทึก</button>
       </div>
-      <div class="team" style="justify-content:flex-end">${m.away}<img src="${m.a}"></div>
-    `;
-    div.querySelector(".save").onclick=()=>{
-      let sh=document.getElementById("h"+i).value;
-      let sa=document.getElementById("a"+i).value;
-      if(sh===""||sa==="")return;
-      m.sh=+sh;m.sa=+sa;m.saved=true;
-      updateTable(m);
-      localStorage.setItem("matches",JSON.stringify(matches));
-      localStorage.setItem("table",JSON.stringify(table));
-      renderProgram();renderTable();
-    };
-    program.appendChild(div);
+      <div class="team" style="justify-content:flex-end">${m.away}<img src="${m.aLogo}"></div>
+    </div>`;
   });
-  let r=document.createElement("button");
-  r.className="reset";r.textContent="รีเซ็ตทั้งหมด";
-  r.onclick=()=>{localStorage.clear();location.reload()};
-  program.appendChild(r);
+
+  program.innerHTML+=`
+  <div class="controls">
+    <button onclick="prevPage()">⬅ ก่อนหน้า</button>
+    <button onclick="nextPage()">ถัดไป ➡</button>
+  </div>
+  <button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>`;
+}
+
+function saveMatch(i){
+  let m=matches[i];
+  let sh=+document.getElementById("h"+i).value;
+  let sa=+document.getElementById("a"+i).value;
+  if(isNaN(sh)||isNaN(sa))return;
+
+  m.sh=sh;m.sa=sa;m.saved=true;
+  updateTable(m);
+  localStorage.setItem("matches",JSON.stringify(matches));
+  localStorage.setItem("table",JSON.stringify(table));
+  renderProgram();renderTable();
 }
 
 function updateTable(m){
   let h=table[m.home],a=table[m.away];
-  h.P++;a.P++;h.GF+=m.sh;h.GA+=m.sa;a.GF+=m.sa;a.GA+=m.sh;
-  if(m.sh>m.sa){h.W++;a.L++;h.PTS+=3}
-  else if(m.sh<m.sa){a.W++;h.L++;a.PTS+=3}
-  else{h.D++;a.D++;h.PTS++;a.PTS++}
+  h.P++;a.P++;
+  h.GF+=m.sh;h.GA+=m.sa;
+  a.GF+=m.sa;a.GA+=m.sh;
   h.GD=h.GF-h.GA;a.GD=a.GF-a.GA;
+
+  if(m.sh>m.sa){h.W++;a.L++;h.PTS+=3;h.form.unshift("W");a.form.unshift("L")}
+  else if(m.sh<m.sa){a.W++;h.L++;a.PTS+=3;a.form.unshift("W");h.form.unshift("L")}
+  else{h.D++;a.D++;h.PTS++;a.PTS++;h.form.unshift("D");a.form.unshift("D")}
+
+  h.form=h.form.slice(0,5);
+  a.form=a.form.slice(0,5);
 }
 
+/* ===== TABLE ===== */
 function renderTable(){
   let arr=Object.entries(table).sort((a,b)=>b[1].PTS-a[1].PTS||b[1].GD-a[1].GD);
   let html=`<table>
-  <tr><th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
+  <tr><th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
+  <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>ฟอร์ม 5 นัด</th></tr>`;
   arr.forEach((t,i)=>{
-    html+=`<tr class="${i==0?"champ":i>=4?"releg":""}">
-    <td>${i+1}</td><td><img src="${t[1].logo}" width="20"> ${t[0]}</td>
-    <td>${t[1].P}</td><td>${t[1].W}</td><td>${t[1].D}</td><td>${t[1].L}</td>
-    <td>${t[1].GF}</td><td>${t[1].GA}</td><td>${t[1].GD}</td><td>${t[1].PTS}</td></tr>`;
+    html+=`
+    <tr class="${i==0?"champ":i>=4?"releg":""}">
+      <td>${i+1}</td>
+      <td class="teamcell"><img src="${t[1].logo}">${t[0]}</td>
+      <td>${t[1].P}</td><td>${t[1].W}</td><td>${t[1].D}</td><td>${t[1].L}</td>
+      <td>${t[1].GF}</td><td>${t[1].GA}</td><td>${t[1].GD}</td><td>${t[1].PTS}</td>
+      <td class="form">${t[1].form.map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+    </tr>`;
   });
   tableDiv.innerHTML=html+"</table>";
 }
 
-const program=document.getElementById("program");
-const tableDiv=document.getElementById("table");
+/* ===== PAGE ===== */
+function nextPage(){ if((page+1)*PER_PAGE<matches.length){page++;localStorage.setItem("page",page);renderProgram();}}
+function prevPage(){ if(page>0){page--;localStorage.setItem("page",page);renderProgram();}}
+
+function resetAll(){ if(confirm("รีเซ็ตทั้งหมด?")){localStorage.clear();location.reload();} }
 
 tabProgram.onclick=()=>{program.style.display="block";tableDiv.style.display="none";tabProgram.classList.add("active");tabTable.classList.remove("active")}
 tabTable.onclick=()=>{program.style.display="none";tableDiv.style.display="block";tabTable.classList.add("active");tabProgram.classList.remove("active")}
