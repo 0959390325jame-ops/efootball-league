@@ -1,48 +1,33 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>🏆 eFootball League</title>
+<title>eFootball League</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{font-family:sans-serif;margin:0;background:#f4f4f4}
-header{background:linear-gradient(90deg,#5a0066,#8b008b);color:#fff;padding:15px;text-align:center;font-size:22px}
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:linear-gradient(90deg,#37003c,#6f1d7a);color:#fff;padding:16px;text-align:center;font-size:22px}
 nav{display:flex;background:#fff}
 nav button{flex:1;padding:12px;border:none;background:#fff;font-size:16px}
-nav button.active{border-bottom:3px solid #8b008b;color:#8b008b;font-weight:bold}
+nav button.active{border-bottom:3px solid #37003c;color:#37003c;font-weight:bold}
 section{padding:10px}
 
-.match{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.team{display:flex;align-items:center;gap:8px;width:40%}
-.team img{width:28px}
+.match{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;
+display:flex;align-items:center;justify-content:space-between}
+.team{display:flex;align-items:center;gap:6px;width:40%}
+.team img{width:26px}
 .score input{width:40px;text-align:center}
-button.save{background:#28a745;color:#fff;border:none;padding:6px 10px;border-radius:6px}
-
-.controls{display:flex;gap:10px;margin:10px 0}
-.controls button{flex:1;padding:10px;border:none;border-radius:8px;font-size:16px}
-.reset{background:#dc3545;color:#fff}
+.save{background:#28a745;color:#fff;border:none;padding:6px 12px;border-radius:6px}
+.reset{background:#dc3545;color:#fff;border:none;padding:12px;width:100%;border-radius:10px;margin-top:12px}
 
 table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
 th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
-th{background:#5a0066;color:#fff}
-.teamcell{display:flex;align-items:center;gap:6px;justify-content:flex-start}
+th{background:#37003c;color:#fff}
+.teamcell{display:flex;align-items:center;gap:6px}
 .teamcell img{width:22px}
-
-.champ{background:#d4f8d4}
-.releg{background:#ffd6d6}
-
-.form span{
-  display:inline-block;
-  width:22px;height:22px;
-  line-height:22px;
-  border-radius:50%;
-  color:#fff;
-  font-size:12px;
-  margin-right:2px;
-}
-.W{background:#28a745}
-.D{background:#999}
-.L{background:#dc3545}
+.champion{background:#d4f8d4}
+.relegation{background:#ffd6d6}
+.controls{display:flex;gap:10px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -50,141 +35,158 @@ th{background:#5a0066;color:#fff}
 <header>🏆 eFootball League</header>
 
 <nav>
-  <button id="tabProgram" class="active">โปรแกรม</button>
-  <button id="tabTable">ตาราง</button>
+  <button id="tabFixtures" class="active">Fixtures</button>
+  <button id="tabTable">Table</button>
 </nav>
 
-<section id="program"></section>
+<section id="fixtures"></section>
 <section id="table" style="display:none"></section>
 
 <script>
 /* ===== TEAMS ===== */
 const teams=[
- {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
- {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
- {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
- {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
- {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d8/Olympique_Marseille_logo.svg"},
- {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
+"Manchester United",
+"AC Milan",
+"Atletico Madrid",
+"Real Madrid",
+"Marseille",
+"Paris SG"
 ];
 
-/* ===== INIT STORAGE ===== */
-let matches = JSON.parse(localStorage.getItem("matches"));
-let table = JSON.parse(localStorage.getItem("table"));
-let page = +localStorage.getItem("page") || 0;
-const PER_PAGE = 6;
+const logos={
+"Manchester United":"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
+"AC Milan":"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg",
+"Atletico Madrid":"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg",
+"Real Madrid":"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
+"Marseille":"https://upload.wikimedia.org/wikipedia/commons/d/d8/Olympique_Marseille_logo.svg",
+"Paris SG":"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"
+};
 
-if(!matches){
-  matches=[];
-  for(let r=0;r<3;r++){
-    for(let i=0;i<teams.length;i++){
-      for(let j=i+1;j<teams.length;j++){
-        matches.push({
-          home:teams[i].name,away:teams[j].name,
-          hLogo:teams[i].logo,aLogo:teams[j].logo,
-          sh:null,sa:null,saved:false
-        });
-      }
-    }
-  }
-  matches.sort(()=>Math.random()-0.5);
-  localStorage.setItem("matches",JSON.stringify(matches));
-}
+/* ===== FIXTURES (3 ROUNDS) ===== */
+const fixtures=[
+["Manchester United","AC Milan"],["Atletico Madrid","Real Madrid"],["Marseille","Paris SG"],
+["Manchester United","Atletico Madrid"],["AC Milan","Marseille"],["Real Madrid","Paris SG"],
+["Manchester United","Marseille"],["AC Milan","Real Madrid"],["Atletico Madrid","Paris SG"],
+["Manchester United","Real Madrid"],["AC Milan","Paris SG"],["Atletico Madrid","Marseille"],
+["Manchester United","Paris SG"],["AC Milan","Atletico Madrid"],["Real Madrid","Marseille"],
 
-if(!table){
-  table={};
-  teams.forEach(t=>{
-    table[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0,logo:t.logo,form:[]};
-  });
-  localStorage.setItem("table",JSON.stringify(table));
-}
+["AC Milan","Manchester United"],["Real Madrid","Atletico Madrid"],["Paris SG","Marseille"],
+["Atletico Madrid","Manchester United"],["Marseille","AC Milan"],["Paris SG","Real Madrid"],
+["Marseille","Manchester United"],["Real Madrid","AC Milan"],["Paris SG","Atletico Madrid"],
+["Real Madrid","Manchester United"],["Paris SG","AC Milan"],["Marseille","Atletico Madrid"],
+["Paris SG","Manchester United"],["Atletico Madrid","AC Milan"],["Marseille","Real Madrid"],
 
-/* ===== PROGRAM ===== */
-function renderProgram(){
-  program.innerHTML="";
-  let start=page*PER_PAGE;
-  let slice=matches.slice(start,start+PER_PAGE);
+["Manchester United","AC Milan"],["Atletico Madrid","Real Madrid"],["Paris SG","Marseille"],
+["AC Milan","Manchester United"],["Real Madrid","Paris SG"],["Marseille","Atletico Madrid"],
+["Manchester United","Real Madrid"],["AC Milan","Paris SG"],["Atletico Madrid","Marseille"],
+["Manchester United","Paris SG"],["AC Milan","Atletico Madrid"],["Real Madrid","Marseille"]
+];
 
-  slice.forEach((m,i)=>{
-    let idx=start+i;
-    program.innerHTML+=`
+/* ===== STORAGE ===== */
+let results = JSON.parse(localStorage.getItem("results")) || {};
+let saved = localStorage.getItem("saved")==="yes";
+
+/* ===== FIXTURES PAGE ===== */
+function renderFixtures(){
+  let html="";
+  fixtures.forEach((m,i)=>{
+    const key=i;
+    const r=results[key]||{};
+    html+=`
     <div class="match">
-      <div class="team"><img src="${m.hLogo}">${m.home}</div>
+      <div class="team"><img src="${logos[m[0]]}">${m[0]}</div>
       <div class="score">
-        <input type="number" id="h${idx}" ${m.saved?"disabled":""} value="${m.sh??""}">
+        <input type="number" min="0" ${saved?"disabled":""} value="${r.h||""}">
         -
-        <input type="number" id="a${idx}" ${m.saved?"disabled":""} value="${m.sa??""}">
-        <button class="save" ${m.saved?"disabled":""} onclick="saveMatch(${idx})">บันทึก</button>
+        <input type="number" min="0" ${saved?"disabled":""} value="${r.a||""}">
       </div>
-      <div class="team" style="justify-content:flex-end">${m.away}<img src="${m.aLogo}"></div>
+      <div class="team"><img src="${logos[m[1]]}">${m[1]}</div>
+      ${saved?"":"<button class='save' onclick='saveMatch("+i+")'>Save</button>"}
     </div>`;
   });
-
-  program.innerHTML+=`
-  <div class="controls">
-    <button onclick="prevPage()">⬅ ก่อนหน้า</button>
-    <button onclick="nextPage()">ถัดไป ➡</button>
-  </div>
-  <button class="reset" onclick="resetAll()">รีเซ็ตทั้งหมด</button>`;
+  if(!saved){
+    html+=`<button class="reset" onclick="resetAll()">Reset All</button>`;
+  }
+  document.getElementById("fixtures").innerHTML=html;
 }
 
+/* ===== SAVE ===== */
 function saveMatch(i){
-  let m=matches[i];
-  let sh=+document.getElementById("h"+i).value;
-  let sa=+document.getElementById("a"+i).value;
-  if(isNaN(sh)||isNaN(sa))return;
-
-  m.sh=sh;m.sa=sa;m.saved=true;
-  updateTable(m);
-  localStorage.setItem("matches",JSON.stringify(matches));
-  localStorage.setItem("table",JSON.stringify(table));
-  renderProgram();renderTable();
+  const box=document.querySelectorAll(".match")[i];
+  const inputs=box.querySelectorAll("input");
+  if(inputs[0].value===""||inputs[1].value==="")return;
+  results[i]={h:+inputs[0].value,a:+inputs[1].value};
+  localStorage.setItem("results",JSON.stringify(results));
+  if(Object.keys(results).length===fixtures.length){
+    saved=true;
+    localStorage.setItem("saved","yes");
+  }
+  renderFixtures();renderTable();
 }
 
-function updateTable(m){
-  let h=table[m.home],a=table[m.away];
-  h.P++;a.P++;
-  h.GF+=m.sh;h.GA+=m.sa;
-  a.GF+=m.sa;a.GA+=m.sh;
-  h.GD=h.GF-h.GA;a.GD=a.GF-a.GA;
-
-  if(m.sh>m.sa){h.W++;a.L++;h.PTS+=3;h.form.unshift("W");a.form.unshift("L")}
-  else if(m.sh<m.sa){a.W++;h.L++;a.PTS+=3;a.form.unshift("W");h.form.unshift("L")}
-  else{h.D++;a.D++;h.PTS++;a.PTS++;h.form.unshift("D");a.form.unshift("D")}
-
-  h.form=h.form.slice(0,5);
-  a.form=a.form.slice(0,5);
+/* ===== RESET ===== */
+function resetAll(){
+  localStorage.clear();
+  location.reload();
 }
 
 /* ===== TABLE ===== */
 function renderTable(){
-  let arr=Object.entries(table).sort((a,b)=>b[1].PTS-a[1].PTS||b[1].GD-a[1].GD);
+  let table={};
+  teams.forEach(t=>table[t]={P:0,W:0,D:0,L:0,GF:0,GA:0,PTS:0});
+  Object.keys(results).forEach(i=>{
+    const [h,a]=fixtures[i];
+    const r=results[i];
+    table[h].P++;table[a].P++;
+    table[h].GF+=r.h;table[h].GA+=r.a;
+    table[a].GF+=r.a;table[a].GA+=r.h;
+    if(r.h>r.a){table[h].W++;table[h].PTS+=3;table[a].L++;}
+    else if(r.h<r.a){table[a].W++;table[a].PTS+=3;table[h].L++;}
+    else{table[h].D++;table[a].D++;table[h].PTS++;table[a].PTS++;}
+  });
+
+  let rows=Object.entries(table).sort((a,b)=>{
+    if(b[1].PTS!==a[1].PTS)return b[1].PTS-a[1].PTS;
+    return (b[1].GF-b[1].GA)-(a[1].GF-a[1].GA);
+  });
+
   let html=`<table>
-  <tr><th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
-  <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>ฟอร์ม 5 นัด</th></tr>`;
-  arr.forEach((t,i)=>{
+  <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
+  rows.forEach((r,i)=>{
+    const t=r[1];
     html+=`
-    <tr class="${i==0?"champ":i>=4?"releg":""}">
+    <tr class="${i===0?"champion":i>=4?"relegation":""}">
       <td>${i+1}</td>
-      <td class="teamcell"><img src="${t[1].logo}">${t[0]}</td>
-      <td>${t[1].P}</td><td>${t[1].W}</td><td>${t[1].D}</td><td>${t[1].L}</td>
-      <td>${t[1].GF}</td><td>${t[1].GA}</td><td>${t[1].GD}</td><td>${t[1].PTS}</td>
-      <td class="form">${t[1].form.map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+      <td class="teamcell"><img src="${logos[r[0]]}">${r[0]}</td>
+      <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
+      <td>${t.GF}</td><td>${t.GA}</td><td>${t.GF-t.GA}</td><td>${t.PTS}</td>
     </tr>`;
   });
-  tableDiv.innerHTML=html+"</table>";
+  html+="</table>";
+  document.getElementById("table").innerHTML=html;
 }
 
-/* ===== PAGE ===== */
-function nextPage(){ if((page+1)*PER_PAGE<matches.length){page++;localStorage.setItem("page",page);renderProgram();}}
-function prevPage(){ if(page>0){page--;localStorage.setItem("page",page);renderProgram();}}
+/* ===== NAV ===== */
+tabFixtures.onclick=()=>{
+  fixturesDiv.style.display="block";
+  tableDiv.style.display="none";
+  tabFixtures.classList.add("active");
+  tabTable.classList.remove("active");
+};
+tabTable.onclick=()=>{
+  fixturesDiv.style.display="none";
+  tableDiv.style.display="block";
+  tabTable.classList.add("active");
+  tabFixtures.classList.remove("active");
+};
 
-function resetAll(){ if(confirm("รีเซ็ตทั้งหมด?")){localStorage.clear();location.reload();} }
+const fixturesDiv=document.getElementById("fixtures");
+const tableDiv=document.getElementById("table");
 
-tabProgram.onclick=()=>{program.style.display="block";tableDiv.style.display="none";tabProgram.classList.add("active");tabTable.classList.remove("active")}
-tabTable.onclick=()=>{program.style.display="none";tableDiv.style.display="block";tabTable.classList.add("active");tabProgram.classList.remove("active")}
-
-renderProgram();renderTable();
+/* INIT */
+renderFixtures();
+renderTable();
 </script>
+
 </body>
 </html>
