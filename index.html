@@ -2,241 +2,185 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>eFootball Premier League</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eFootball League</title>
 
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/en/5/5a/Premier_League_Logo.svg">
-<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/en/5/5a/Premier_League_Logo.svg">
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4}
-header{background:#37003c;color:#fff;padding:15px;text-align:center;font-size:20px}
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:#37003c;color:#fff;padding:16px;text-align:center;font-size:22px;font-weight:bold}
+nav{display:flex;background:#fff}
+nav button{flex:1;padding:14px;border:none;background:#fff;font-size:16px}
+nav button.active{border-bottom:4px solid #37003c;font-weight:bold}
 
-/* เมนู */
-nav{display:flex;justify-content:space-around;background:#fff;border-bottom:3px solid #37003c}
-nav button{
- flex:1;padding:12px;border:none;background:#fff;
- font-size:14px;font-weight:bold;color:#37003c
-}
-nav button.active{border-bottom:4px solid #37003c}
+section{display:none;padding:10px}
+section.active{display:block}
 
-/* layout */
-.container{padding:15px}
-.page{display:none}
-.page.active{display:block}
-
-/* ตาราง */
-table{width:100%;border-collapse:collapse;background:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
 th,td{padding:8px;text-align:center;border-bottom:1px solid #ddd}
-th{background:#37003c;color:#fff}
-.team{display:flex;align-items:center;gap:6px}
-.team img{width:20px}
+th{background:#eee}
+tr.leader{background:#d4edda}
+tr.relegation{background:#f8d7da}
 
-.leader{background:#e1bee7;font-weight:bold}
-.relegation{background:#ffcdd2}
+.match{background:#fff;margin:8px 0;padding:10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between}
+.team{width:40%;display:flex;align-items:center}
+.team img{height:26px;margin-right:6px}
+.score input{width:40px;text-align:center;font-size:16px}
 
-/* ฟอร์ม */
-.form{display:flex;gap:4px;justify-content:center}
-.form span{
- width:16px;height:16px;border-radius:50%;
- font-size:10px;color:#fff;
- display:flex;align-items:center;justify-content:center
-}
-.W{background:#2e7d32}
-.D{background:#f9a825}
-.L{background:#c62828}
-
-/* โปรแกรม */
-.match{
- background:#fff;padding:10px;margin-bottom:10px;
- border-radius:8px;display:flex;
- align-items:center;justify-content:space-between
-}
-.score input{width:40px;text-align:center}
-button.save{
- background:#00c853;color:#fff;border:none;
- padding:6px 10px;border-radius:5px
-}
-button.save:disabled{background:#aaa}
-
-.reset{
- background:#d50000;color:#fff;border:none;
- padding:8px 12px;border-radius:5px;margin-bottom:15px
-}
+.controls{display:flex;justify-content:space-between;margin:10px 0}
+.controls button{padding:8px 12px;border:none;background:#37003c;color:#fff;border-radius:6px}
 </style>
 </head>
 
 <body>
 
-<header>🏆 eFootball Premier League</header>
+<header>eFootball League</header>
 
 <nav>
- <button class="active" onclick="showPage('table')">ตารางคะแนน</button>
- <button onclick="showPage('fixtures')">โปรแกรมแข่ง</button>
- <button onclick="showPage('stats')">สถิติ</button>
+  <button id="tabProgram" class="active" onclick="show('program')">โปรแกรม</button>
+  <button id="tabTable" onclick="show('table')">ตารางคะแนน</button>
 </nav>
 
-<div class="container">
+<!-- PROGRAM -->
+<section id="program" class="active">
+  <div class="controls">
+    <button onclick="prevDay()">◀</button>
+    <b id="dayTitle"></b>
+    <button onclick="nextDay()">▶</button>
+  </div>
+  <div id="matches"></div>
+</section>
 
-<!-- ตารางคะแนน -->
-<div id="table" class="page active">
-<table>
-<thead>
-<tr>
-<th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
-<th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</div>
-
-<!-- โปรแกรม -->
-<div id="fixtures" class="page">
-<button class="reset" onclick="resetLeague()">รีเซ็ตฤดูกาล</button>
-<div id="fixturesBody"></div>
-</div>
-
-<!-- สถิติ -->
-<div id="stats" class="page">
-<table>
-<thead>
-<tr><th>#</th><th>ทีม</th><th>ประตูรวม</th></tr>
-</thead>
-<tbody id="scorerBody"></tbody>
-</table>
-</div>
-
-</div>
+<!-- TABLE -->
+<section id="table">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>ทีม</th><th>P</th><th>W</th><th>D</th><th>L</th>
+        <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <br>
+  <button onclick="resetAll()" style="width:100%;padding:10px;background:#c00;color:#fff;border:none">
+    รีเซ็ตข้อมูลทั้งหมด
+  </button>
+</section>
 
 <script>
 const teams=[
- {name:"Real Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg"},
- {name:"Manchester United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
- {name:"Marseille",logo:"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg"},
- {name:"Atletico Madrid",logo:"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg"},
- {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
- {name:"Paris Saint-Germain",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
+"Real Madrid","Manchester United","Olympique de Marseille",
+"Atletico Madrid","AC Milan","Paris Saint-Germain"
 ];
 
-let table = JSON.parse(localStorage.getItem("table")) ||
-teams.map(t=>({...t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0,form:[]}));
+const logos={
+"Real Madrid":"https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
+"Manchester United":"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
+"Olympique de Marseille":"https://upload.wikimedia.org/wikipedia/en/2/27/Olympique_Marseille_logo.svg",
+"Atletico Madrid":"https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg",
+"AC Milan":"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg",
+"Paris Saint-Germain":"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"
+};
 
-let fixtures=[];
-for(let i=0;i<teams.length;i++){
- for(let j=i+1;j<teams.length;j++){
-  fixtures.push([i,j]);
-  fixtures.push([j,i]);
+function generate(){
+ let all=[];
+ for(let r=1;r<=3;r++){
+  for(let i=0;i<teams.length;i++){
+   for(let j=i+1;j<teams.length;j++){
+    all.push({home:r%2?teams[i]:teams[j],away:r%2?teams[j]:teams[i],score:""});
+   }
+  }
  }
+ let days=[],day=[];
+ all.forEach(m=>{
+  if(day.some(x=>[x.home,x.away].includes(m.home)||[x.home,x.away].includes(m.away))){
+    days.push(day); day=[];
+  }
+  day.push(m);
+  if(day.length==6){days.push(day);day=[];}
+ });
+ if(day.length) days.push(day);
+ return days;
 }
 
-let played = JSON.parse(localStorage.getItem("played")) ||
-new Array(fixtures.length).fill(false);
+let days=JSON.parse(localStorage.getItem("days"))||generate();
+let currentDay=0;
 
-function saveData(){
- localStorage.setItem("table",JSON.stringify(table));
- localStorage.setItem("played",JSON.stringify(played));
+function save(){localStorage.setItem("days",JSON.stringify(days));}
+
+function renderProgram(){
+ document.getElementById("dayTitle").innerText="DAY "+(currentDay+1);
+ const box=document.getElementById("matches");
+ box.innerHTML="";
+ days[currentDay].forEach((m,i)=>{
+ box.innerHTML+=`
+ <div class="match">
+  <div class="team"><img src="${logos[m.home]}">${m.home}</div>
+  <div class="score">
+   <input value="${m.score.split('-')[0]||''}" onchange="setScore(${i},this.value,0)"> -
+   <input value="${m.score.split('-')[1]||''}" onchange="setScore(${i},this.value,1)">
+  </div>
+  <div class="team" style="justify-content:flex-end">
+   <img src="${logos[m.away]}">${m.away}
+  </div>
+ </div>`;
+ });
+}
+
+function setScore(i,val,side){
+ let s=days[currentDay][i].score.split("-");
+ s[side]=val;
+ days[currentDay][i].score=s.join("-");
+ save(); renderTable();
 }
 
 function renderTable(){
- const body=document.getElementById("tableBody");
- body.innerHTML="";
- table.sort((a,b)=>b.PTS-a.PTS||b.GD-a.GD||b.GF-a.GF);
- table.forEach((t,i)=>{
-  let cls=i===0?"leader":i>=table.length-2?"relegation":"";
-  body.innerHTML+=`
-  <tr class="${cls}">
+ let stats={};
+ teams.forEach(t=>stats[t]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
+ days.flat().forEach(m=>{
+  if(!m.score.includes("-"))return;
+  let [h,a]=m.score.split("-").map(Number);
+  if(isNaN(h)||isNaN(a))return;
+  let H=stats[m.home],A=stats[m.away];
+  H.P++;A.P++;H.GF+=h;H.GA+=a;A.GF+=a;A.GA+=h;
+  if(h>a){H.W++;A.L++;H.form.push("W");A.form.push("L");}
+  else if(h<a){A.W++;H.L++;A.form.push("W");H.form.push("L");}
+  else{H.D++;A.D++;H.form.push("D");A.form.push("D");}
+ });
+ let arr=Object.keys(stats).map(t=>({...stats[t],team:t,GD:stats[t].GF-stats[t].GA,Pts:stats[t].W*3+stats[t].D}));
+ arr.sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
+ const tb=document.getElementById("tableBody");
+ tb.innerHTML="";
+ arr.forEach((t,i)=>{
+  tb.innerHTML+=`
+  <tr class="${i==0?'leader':i>=arr.length-2?'relegation':''}">
    <td>${i+1}</td>
-   <td class="team"><img src="${t.logo}">${t.name}</td>
+   <td style="text-align:left"><img src="${logos[t.team]}" height="20"> ${t.team}</td>
    <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
-   <td>${t.PTS}</td>
-   <td><div class="form">
-    ${t.form.slice(-5).map(f=>`<span class="${f}">${f}</span>`).join("")}
-   </div></td>
+   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td><td>${t.Pts}</td>
+   <td>${t.form.slice(-5).join(" ")}</td>
   </tr>`;
  });
 }
 
-function renderFixtures(){
- const box=document.getElementById("fixturesBody");
- box.innerHTML="";
- fixtures.forEach((f,i)=>{
-  box.innerHTML+=`
-  <div class="match">
-   <div class="team"><img src="${teams[f[0]].logo}">${teams[f[0]].name}</div>
-   <div class="score">
-    <input type="number" min="0" id="h${i}" ${played[i]?"disabled":""}> -
-    <input type="number" min="0" id="a${i}" ${played[i]?"disabled":""}>
-   </div>
-   <div class="team">${teams[f[1]].name}<img src="${teams[f[1]].logo}"></div>
-   <button class="save" onclick="saveMatch(${i})" ${played[i]?"disabled":""}>บันทึก</button>
-  </div>`;
- });
-}
-
-function renderStats(){
- const body=document.getElementById("scorerBody");
- body.innerHTML="";
- [...table].sort((a,b)=>b.GF-a.GF).forEach((t,i)=>{
-  body.innerHTML+=`
-  <tr>
-   <td>${i+1}</td>
-   <td class="team"><img src="${t.logo}">${t.name}</td>
-   <td>${t.GF}</td>
-  </tr>`;
- });
-}
-
-function saveMatch(i){
- if(played[i])return;
- const h=document.getElementById("h"+i).value;
- const a=document.getElementById("a"+i).value;
- if(h===""||a==="")return;
-
- const home=table[fixtures[i][0]];
- const away=table[fixtures[i][1]];
-
- home.P++;away.P++;
- home.GF+=+h;home.GA+=+a;
- away.GF+=+a;away.GA+=+h;
-
- if(h>a){
-  home.W++;home.PTS+=3;away.L++;
-  home.form.push("W");away.form.push("L");
- }else if(h<a){
-  away.W++;away.PTS+=3;home.L++;
-  away.form.push("W");home.form.push("L");
- }else{
-  home.D++;away.D++;home.PTS++;away.PTS++;
-  home.form.push("D");away.form.push("D");
- }
-
- home.GD=home.GF-home.GA;
- away.GD=away.GF-away.GA;
-
- played[i]=true;
- saveData();
- renderTable();renderFixtures();renderStats();
-}
-
-function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+function prevDay(){if(currentDay>0){currentDay--;renderProgram();}}
+function nextDay(){if(currentDay<days.length-1){currentDay++;renderProgram();}}
+function show(id){
+ document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- event.target.classList.add("active");
+ document.getElementById("tab"+id.charAt(0).toUpperCase()+id.slice(1)).classList.add("active");
+ renderTable();
+}
+function resetAll(){
+ if(confirm("ลบข้อมูลทั้งหมด?")){
+ localStorage.clear(); location.reload();
+ }
 }
 
-function resetLeague(){
- if(!confirm("รีเซ็ตข้อมูลทั้งหมด?"))return;
- localStorage.clear();location.reload();
-}
-
-renderTable();
-renderFixtures();
-renderStats();
+renderProgram(); renderTable();
 </script>
-
 </body>
 </html>
