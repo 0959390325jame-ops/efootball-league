@@ -83,7 +83,11 @@ button{
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+<hr>
 
+<h2>✍️ กรอกผลการแข่งขัน</h2>
+
+<div id="fixtures"></div>
 <button onclick="playNextMatch()">▶️ แข่งคู่ถัดไป</button>
 
 <h2>🗓️ ตารางแข่งขัน</h2>
@@ -168,6 +172,79 @@ function playNextMatch(){
 renderTable();
 renderFixtures();
 </script>
+<script>
+let teams = [
+  { name:"Real Madrid", p:0,w:0,d:0,l:0,pts:0 },
+  { name:"Manchester United", p:0,w:0,d:0,l:0,pts:0 },
+  { name:"Marseille", p:0,w:0,d:0,l:0,pts:0 },
+  { name:"Atletico Madrid", p:0,w:0,d:0,l:0,pts:0 },
+  { name:"AC Milan", p:0,w:0,d:0,l:0,pts:0 },
+  { name:"Paris Saint-Germain", p:0,w:0,d:0,l:0,pts:0 }
+];
 
+let fixtures=[];
+for(let i=0;i<teams.length;i++){
+  for(let j=i+1;j<teams.length;j++){
+    fixtures.push({a:i,b:j,played:false});
+  }
+}
+
+function renderTable(){
+  const tb=document.getElementById("tableBody");
+  tb.innerHTML="";
+  teams.sort((a,b)=>b.pts-a.pts).forEach((t,i)=>{
+    tb.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${t.name}</td>
+      <td>${t.p}</td>
+      <td>${t.w}</td>
+      <td>${t.d}</td>
+      <td>${t.l}</td>
+      <td>${t.pts}</td>
+    </tr>`;
+  });
+}
+
+function submitScore(i){
+  let m=fixtures[i];
+  if(m.played) return;
+
+  let g1=parseInt(document.getElementById("g1_"+i).value);
+  let g2=parseInt(document.getElementById("g2_"+i).value);
+  if(isNaN(g1)||isNaN(g2)) return alert("กรอกสกอร์ก่อน");
+
+  let A=teams[m.a], B=teams[m.b];
+  A.p++; B.p++;
+
+  if(g1>g2){A.w++;B.l++;A.pts+=3;}
+  else if(g2>g1){B.w++;A.l++;B.pts+=3;}
+  else{A.d++;B.d++;A.pts++;B.pts++;}
+
+  m.played=true;
+  renderTable();
+  renderFixtures();
+}
+
+function renderFixtures(){
+  const fx=document.getElementById("fixtures");
+  fx.innerHTML="";
+  fixtures.forEach((m,i)=>{
+    fx.innerHTML+=`
+    <div class="match">
+      ${teams[m.a].name}
+      <input id="g1_${i}" type="number" min="0" style="width:40px">
+      -
+      <input id="g2_${i}" type="number" min="0" style="width:40px">
+      ${teams[m.b].name}
+      ${m.played?" ✅":
+      `<button onclick="submitScore(${i})">บันทึก</button>`}
+    </div>`;
+  });
+}
+
+renderTable();
+renderFixtures();
+</script>
 </body>
 </html>
