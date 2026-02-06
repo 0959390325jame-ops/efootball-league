@@ -31,7 +31,7 @@ nav{
   margin:12px;
 }
 nav button{
-  padding:8px 14px;
+  padding:8px 16px;
   border:none;
   border-radius:20px;
   background:var(--pl-purple);
@@ -64,7 +64,9 @@ th{
 .team img{
   width:22px;
   height:22px;
+  object-fit:contain;
 }
+
 .champ{background:#e7ffe7;}
 .relegate{background:#ffe7e7;}
 
@@ -76,28 +78,34 @@ th{
   border-radius:50%;
   color:#fff;
   font-size:11px;
+  margin:0 1px;
 }
 .W{background:#2ecc71;}
 .D{background:#f1c40f;}
 .L{background:#e74c3c;}
 
 .round-title{
-  margin:10px 0 6px;
+  margin:14px 0 6px;
   font-weight:bold;
   color:var(--pl-purple);
 }
 
 .fixture{
   background:#fff;
-  margin-bottom:6px;
-  padding:8px;
-  border-radius:8px;
+  margin-bottom:8px;
+  padding:10px;
+  border-radius:10px;
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
+.score{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
 .score input{
-  width:40px;
+  width:42px;
   text-align:center;
   font-size:16px;
 }
@@ -105,12 +113,12 @@ th{
 .controls{
   display:flex;
   justify-content:space-between;
-  margin:10px 0;
+  margin:12px 0;
 }
 .controls button{
-  padding:6px 12px;
+  padding:8px 14px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   background:var(--pl-purple);
   color:#fff;
   cursor:pointer;
@@ -120,7 +128,7 @@ th{
 
 <body>
 
-<header>eFootball League SS2</header>
+<header>🏆 eFootball League SS2</header>
 
 <nav>
   <button onclick="showPage('table')">Table</button>
@@ -132,8 +140,10 @@ th{
 <table>
 <thead>
 <tr>
-<th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
-<th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th>
+<th>#</th><th>Club</th>
+<th>P</th><th>W</th><th>D</th><th>L</th>
+<th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+<th>Form</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
@@ -162,58 +172,82 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-let fixtures = [
-  {round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
-  {round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
-  {round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
-  {round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
-  {round:1,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
-  {round:1,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
-  {round:2,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
-  {round:2,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
-  {round:2,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
-  {round:2,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
-  {round:2,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
-  {round:2,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+// ===== FIXTURES (FROM YOUR LIST) =====
+let fixtures=[
+ {round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
+ {round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
+ {round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
+ {round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
+ {round:1,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
+ {round:1,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+ {round:2,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
+ {round:2,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
+ {round:2,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
+ {round:2,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
+ {round:2,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
+ {round:2,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+ {round:3,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
+ {round:3,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
+ {round:3,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
+ {round:3,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false},
+ {round:3,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false},
+ {round:3,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
 ];
 
-let page=0;
 const perPage=6;
-const saved=JSON.parse(localStorage.getItem("efs2"))||{};
-fixtures=fixtures.map((f,i)=>saved[i]?saved[i]:f);
+let page=0;
 
+// ===== STORAGE =====
+const saved=JSON.parse(localStorage.getItem("efs2"));
+if(saved) fixtures=saved;
+
+// ===== NAV =====
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  render();
 }
 
+// ===== FIXTURES RENDER (WITH ROUND) =====
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
- const pageMatches=fixtures.slice(page*perPage,page*perPage+perPage);
- let currentRound=null;
+ let lastRound=null;
 
- pageMatches.forEach((m,i)=>{
-  if(m.round!==currentRound){
+ fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
+  const idx=page*perPage+i;
+  if(m.round!==lastRound){
     box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
-    currentRound=m.round;
+    lastRound=m.round;
   }
+
   box.innerHTML+=`
   <div class="fixture">
     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
     <div class="score">
-      <input type="number" min="0" ${m.locked?"disabled":""}
-        value="${m.hs}" onchange="updateScore(${page*perPage+i},'hs',this.value)">
+      <input type="number" min="0" value="${m.hs}" ${m.locked?"disabled":""}
+        onchange="updateScore(${idx},'hs',this.value)">
       -
-      <input type="number" min="0" ${m.locked?"disabled":""}
-        value="${m.as}" onchange="updateScore(${page*perPage+i},'as',this.value)">
+      <input type="number" min="0" value="${m.as}" ${m.locked?"disabled":""}
+        onchange="updateScore(${idx},'as',this.value)">
     </div>
     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
   </div>`;
  });
 }
 
+// ===== SCORE =====
+function updateScore(i,k,v){
+ fixtures[i][k]=v;
+ if(fixtures[i].hs!=="" && fixtures[i].as!==""){
+  fixtures[i].locked=true;
+ }
+ renderTable();
+}
+
+// ===== TABLE =====
 function renderTable(){
  let stats={};
  teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
@@ -222,38 +256,39 @@ function renderTable(){
   if(m.hs!=="" && m.as!==""){
    let h=stats[m.h], a=stats[m.a];
    let hs=+m.hs, as=+m.as;
+
    h.P++; a.P++;
    h.GF+=hs; h.GA+=as;
    a.GF+=as; a.GA+=hs;
+
    if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
    else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
    else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
   }
  });
 
- let arr=Object.keys(stats).map(k=>{
-  let s=stats[k];
-  return {...s,name:k,GD:s.GF-s.GA,Pts:s.W*3+s.D};
+ let arr=Object.keys(stats).map(n=>{
+  let s=stats[n];
+  return {...s,name:n,GD:s.GF-s.GA,Pts:s.W*3+s.D};
  }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
 
  document.getElementById("tableBody").innerHTML=
  arr.map((t,i)=>`
  <tr class="${i==0?'champ':i>=4?'relegate':''}">
- <td>${i+1}</td>
- <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
- <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
- <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
- <td><b>${t.Pts}</b></td>
- <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+  <td>${i+1}</td>
+  <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
+  <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
+  <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
+  <td><b>${t.Pts}</b></td>
+  <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
  </tr>`).join("");
 }
 
-function getLogo(name){return teams.find(t=>t.name===name).logo;}
-function updateScore(i,k,v){if(!fixtures[i].locked)fixtures[i][k]=v;}
+// ===== HELPERS =====
+function getLogo(n){return teams.find(t=>t.name===n).logo;}
 function saveResults(){
- fixtures.forEach(m=>{if(m.hs!==""&&m.as!=="")m.locked=true;});
  localStorage.setItem("efs2",JSON.stringify(fixtures));
- alert("Scores saved & locked");
+ alert("Saved & locked");
 }
 function resetAll(){
  if(confirm("Reset all data?")){
