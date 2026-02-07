@@ -41,11 +41,6 @@ th{background:var(--pl-purple);color:#fff;}
 .team{display:flex;align-items:center;gap:6px;justify-content:center;}
 .team img{width:22px;height:22px;object-fit:contain;}
 
-.player{
-  display:flex;align-items:center;gap:6px;justify-content:center;
-}
-.player img{width:20px;height:20px;object-fit:contain;}
-
 .champ{background:#e7ffe7;}
 .relegate{background:#ffe7e7;}
 
@@ -58,7 +53,11 @@ th{background:var(--pl-purple);color:#fff;}
 .D{background:#f1c40f;}
 .L{background:#e74c3c;}
 
-.round-title{margin:14px 0 6px;font-weight:bold;color:var(--pl-purple);}
+.round-title{
+  margin:14px 0 6px;
+  font-weight:bold;
+  color:var(--pl-purple);
+}
 
 .fixture{
   background:#fff;margin-bottom:8px;
@@ -70,13 +69,8 @@ th{background:var(--pl-purple);color:#fff;}
 .score{
   display:flex;align-items:center;gap:6px;
 }
-.score input{width:42px;text-align:center;font-size:16px;}
-
-.event-box{
-  margin-top:6px;font-size:12px;
-}
-.event-box input,.event-box select{
-  font-size:12px;padding:2px;
+.score input{
+  width:42px;text-align:center;font-size:16px;
 }
 
 .controls{
@@ -126,7 +120,7 @@ th{background:var(--pl-purple);color:#fff;}
 </div>
 </section>
 
-<!-- STATS -->
+<!-- TOP SCORERS -->
 <section id="scorers">
 <table>
 <thead>
@@ -136,6 +130,7 @@ th{background:var(--pl-purple);color:#fff;}
 </table>
 </section>
 
+<!-- YELLOW -->
 <section id="yellow">
 <table>
 <thead>
@@ -145,6 +140,7 @@ th{background:var(--pl-purple);color:#fff;}
 </table>
 </section>
 
+<!-- RED -->
 <section id="red">
 <table>
 <thead>
@@ -165,8 +161,9 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ===== FIXTURES 15 ROUNDS ===== */
+/* ===== FIXTURES FULL 15 ROUNDS ===== */
 let fixtures=[
+
 {round:1,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
 {round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:1,h:"Marseille",a:"PSG",hs:"",as:"",events:[]},
@@ -225,14 +222,14 @@ let fixtures=[
 
 {round:15,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
 {round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
+{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]}
+
 ];
 
-const perPage=6; let page=0;
-const saved=JSON.parse(localStorage.getItem("efs2"));
-if(saved) fixtures=saved;
+const perPage=6;
+let page=0;
 
-/* ===== FUNCTIONS ===== */
+/* ===== CORE ===== */
 function getLogo(name){
  return teams.find(t=>t.name===name)?.logo||"";
 }
@@ -248,48 +245,23 @@ function renderFixtures(){
  box.innerHTML="";
  let lastRound=null;
  fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
-  const idx=page*perPage+i;
   if(m.round!==lastRound){
     box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
     lastRound=m.round;
   }
   box.innerHTML+=`
   <div class="fixture">
-   <div class="match-row">
-    <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-    <div class="score">
-      <input type="number" min="0" value="${m.hs}" onchange="setScore(${idx},'hs',this.value)">
-      -
-      <input type="number" min="0" value="${m.as}" onchange="setScore(${idx},'as',this.value)">
+    <div class="match-row">
+      <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+      <div class="score">
+        <input type="number" min="0" value="${m.hs}">
+        -
+        <input type="number" min="0" value="${m.as}">
+      </div>
+      <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
     </div>
-    <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
-   </div>
-   <div class="event-box">
-    <select id="etype${idx}">
-      <option value="goal">⚽ Goal</option>
-      <option value="yellow">🟨 Yellow</option>
-      <option value="red">🟥 Red</option>
-    </select>
-    <input placeholder="Player name" id="pname${idx}">
-    <select id="pteam${idx}">
-      <option>${m.h}</option>
-      <option>${m.a}</option>
-    </select>
-    <button onclick="addEvent(${idx})">Add</button>
-   </div>
   </div>`;
  });
-}
-
-function setScore(i,k,v){fixtures[i][k]=v;renderTable();}
-
-function addEvent(i){
- const type=document.getElementById("etype"+i).value;
- const name=document.getElementById("pname"+i).value;
- const team=document.getElementById("pteam"+i).value;
- if(!name) return;
- fixtures[i].events.push({type,player:name,team});
- renderStats();
 }
 
 function renderTable(){
@@ -319,51 +291,16 @@ function renderTable(){
  </tr>`).join("");
 }
 
-function renderStats(){
- let p={};
- fixtures.forEach(m=>{
-  m.events.forEach(e=>{
-   p[e.player]=p[e.player]||{team:e.team,g:0,y:0,r:0};
-   if(e.type==="goal")p[e.player].g++;
-   if(e.type==="yellow")p[e.player].y++;
-   if(e.type==="red")p[e.player].r++;
-  });
- });
- let arr=Object.entries(p);
-
- scorerBody.innerHTML=arr.sort((a,b)=>b[1].g-a[1].g)
- .map((p,i)=>`
- <tr>
-  <td>${i+1}</td>
-  <td>${p[0]}</td>
-  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
-  <td>${p[1].g}</td>
- </tr>`).join("");
-
- yellowBody.innerHTML=arr.sort((a,b)=>b[1].y-a[1].y)
- .map((p,i)=>`
- <tr>
-  <td>${i+1}</td>
-  <td>${p[0]}</td>
-  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
-  <td>${p[1].y}</td>
- </tr>`).join("");
-
- redBody.innerHTML=arr.sort((a,b)=>b[1].r-a[1].r)
- .map((p,i)=>`
- <tr>
-  <td>${i+1}</td>
-  <td>${p[0]}</td>
-  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
-  <td>${p[1].r}</td>
- </tr>`).join("");
+function render(){
+ renderFixtures();
+ renderTable();
 }
 
-function saveResults(){localStorage.setItem("efs2",JSON.stringify(fixtures));alert("Saved");}
-function resetAll(){if(confirm("Reset all?")){localStorage.removeItem("efs2");location.reload();}}
 function nextPage(){if((page+1)*perPage<fixtures.length){page++;render();}}
 function prevPage(){if(page>0){page--;render();}}
-function render(){renderFixtures();renderTable();renderStats();}
+function saveResults(){alert("Local only (ยังไม่ใช้ Firebase)");}
+function resetAll(){location.reload();}
+
 render();
 </script>
 
