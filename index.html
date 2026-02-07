@@ -29,7 +29,6 @@ nav{
   justify-content:center;
   gap:12px;
   margin:12px;
-  flex-wrap:wrap;
 }
 nav button{
   padding:8px 16px;
@@ -99,7 +98,6 @@ th{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px;
 }
 .score{
   display:flex;
@@ -110,11 +108,6 @@ th{
   width:42px;
   text-align:center;
   font-size:16px;
-}
-
-.cards{
-  font-size:12px;
-  text-align:center;
 }
 
 .controls{
@@ -140,10 +133,8 @@ th{
 <nav>
   <button onclick="showPage('table')">Table</button>
   <button onclick="showPage('fixtures')">Fixtures</button>
-  <button onclick="showPage('scorers')">Top Scorer</button>
 </nav>
 
-<!-- TABLE -->
 <section id="table" class="active">
 <table>
 <thead>
@@ -158,7 +149,6 @@ th{
 </table>
 </section>
 
-<!-- FIXTURES -->
 <section id="fixtures">
 <div id="fixtureList"></div>
 
@@ -168,18 +158,6 @@ th{
   <button onclick="resetAll()">Reset</button>
   <button onclick="nextPage()">Next</button>
 </div>
-</section>
-
-<!-- TOP SCORER -->
-<section id="scorers">
-<table>
-<thead>
-<tr>
-<th>#</th><th>Player</th><th>Club</th><th>Goals</th>
-</tr>
-</thead>
-<tbody id="scorerBody"></tbody>
-</table>
 </section>
 
 <script>
@@ -194,61 +172,88 @@ const teams=[
 
 /* ===== FIXTURES 15 ROUNDS (45 MATCHES) ===== */
 let fixtures=[
-/* รอบ 1 */{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 2 */{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 3 */{round:3,h:"Man United",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 4 */{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:4,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 5 */{round:5,h:"Man United",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 6 */{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:6,h:"PSG",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 7 */{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 8 */{round:8,h:"Marseille",a:"Man United",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 9 */{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:9,h:"PSG",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 10 */{round:10,h:"PSG",a:"Man United",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 11 */{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:11,h:"PSG",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 12 */{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 13 */{round:13,h:"Man United",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 14 */{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:14,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-/* รอบ 15 */{round:15,h:"Man United",a:"PSG",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
-{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false,hy:0,hr:0,ay:0,ar:0},
+/* รอบ 1 */
+{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
+{round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 2 */
+{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
+{round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 3 */
+{round:3,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
+{round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 4 */
+{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:4,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
+{round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 5 */
+{round:5,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
+{round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 6 */
+{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false},
+{round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:6,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 7 */
+{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",locked:false},
+{round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",locked:false},
+{round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 8 */
+{round:8,h:"Marseille",a:"Man United",hs:"",as:"",locked:false},
+{round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",locked:false},
+{round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 9 */
+{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",locked:false},
+{round:9,h:"PSG",a:"AC Milan",hs:"",as:"",locked:false},
+{round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 10 */
+{round:10,h:"PSG",a:"Man United",hs:"",as:"",locked:false},
+{round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",locked:false},
+{round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",locked:false},
+
+/* รอบ 11 */
+{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
+{round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:11,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 12 */
+{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
+{round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 13 */
+{round:13,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
+{round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
+
+/* รอบ 14 */
+{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
+{round:14,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
+{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
+
+/* รอบ 15 */
+{round:15,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
+{round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
+{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
 ];
 
 const perPage=6;
 let page=0;
 
-let scorers=JSON.parse(localStorage.getItem("scorers"))||{};
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved) fixtures=saved;
 
-/* ===== FUNCTIONS ===== */
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
@@ -263,74 +268,85 @@ function renderFixtures(){
  fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
   const idx=page*perPage+i;
   if(m.round!==lastRound){
-   box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
-   lastRound=m.round;
+    box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
+    lastRound=m.round;
   }
+
   box.innerHTML+=`
   <div class="fixture">
-   <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-
-   <div class="score">
-    <input type="number" min="0" value="${m.hs}" onchange="updateScore(${idx},'hs',this.value)">
-    -
-    <input type="number" min="0" value="${m.as}" onchange="updateScore(${idx},'as',this.value)">
-   </div>
-
-   <div class="cards">
-    🟨 <button onclick="addCard(${idx},'h','y')">+</button> ${m.hy}
-    🟥 <button onclick="addCard(${idx},'h','r')">+</button> ${m.hr}<br>
-    🟨 <button onclick="addCard(${idx},'a','y')">+</button> ${m.ay}
-    🟥 <button onclick="addCard(${idx},'a','r')">+</button> ${m.ar}
-   </div>
-
-   <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
+    <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+    <div class="score">
+      <input type="number" min="0" value="${m.hs}" ${m.locked?"disabled":""}
+        onchange="updateScore(${idx},'hs',this.value)">
+      -
+      <input type="number" min="0" value="${m.as}" ${m.locked?"disabled":""}
+        onchange="updateScore(${idx},'as',this.value)">
+    </div>
+    <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
   </div>`;
  });
 }
 
-function updateScore(i,k,v){fixtures[i][k]=v;render();}
-function addCard(i,s,t){t==="y"?fixtures[i][s+"y"]++:fixtures[i][s+"r"]++;render();}
+function updateScore(i,k,v){
+ fixtures[i][k]=v;
+ if(fixtures[i].hs!=="" && fixtures[i].as!==""){
+  fixtures[i].locked=true;
+ }
+ renderTable();
+}
 
 function renderTable(){
  let stats={};
  teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
+
  fixtures.forEach(m=>{
-  if(m.hs!==""&&m.as!==""){
-   let h=stats[m.h],a=stats[m.a],hs=+m.hs,as=+m.as;
-   h.P++;a.P++;h.GF+=hs;h.GA+=as;a.GF+=as;a.GA+=hs;
+  if(m.hs!=="" && m.as!==""){
+   let h=stats[m.h], a=stats[m.a];
+   let hs=+m.hs, as=+m.as;
+
+   h.P++; a.P++;
+   h.GF+=hs; h.GA+=as;
+   a.GF+=as; a.GA+=hs;
+
    if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
    else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
    else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
   }
  });
- let arr=Object.keys(stats).map(n=>({...stats[n],name:n,GD:stats[n].GF-stats[n].GA,Pts:stats[n].W*3+stats[n].D}))
- .sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
 
- document.getElementById("tableBody").innerHTML=arr.map((t,i)=>`
+ let arr=Object.keys(stats).map(n=>{
+  let s=stats[n];
+  return {...s,name:n,GD:s.GF-s.GA,Pts:s.W*3+s.D};
+ }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
+
+ document.getElementById("tableBody").innerHTML=
+ arr.map((t,i)=>`
  <tr class="${i==0?'champ':i>=4?'relegate':''}">
- <td>${i+1}</td>
- <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
- <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
- <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
- <td><b>${t.Pts}</b></td>
- <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
+  <td>${i+1}</td>
+  <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
+  <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
+  <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
+  <td><b>${t.Pts}</b></td>
+  <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
  </tr>`).join("");
 }
 
-function renderScorers(){
- let arr=Object.keys(scorers).map(n=>({name:n,...scorers[n]}))
- .sort((a,b)=>b.goals-a.goals);
- document.getElementById("scorerBody").innerHTML=
- arr.map((s,i)=>`<tr><td>${i+1}</td><td>${s.name}</td><td>${s.team}</td><td>${s.goals}</td></tr>`).join("");
-}
-
 function getLogo(n){return teams.find(t=>t.name===n).logo;}
-function saveResults(){localStorage.setItem("efs2",JSON.stringify(fixtures));alert("Saved");}
-function resetAll(){if(confirm("Reset all?")){localStorage.clear();location.reload();}}
+function saveResults(){
+ localStorage.setItem("efs2",JSON.stringify(fixtures));
+ alert("Saved!");
+}
+function resetAll(){
+ if(confirm("Reset all data?")){
+  localStorage.removeItem("efs2");
+  location.reload();
+ }
+}
 function nextPage(){if((page+1)*perPage<fixtures.length){page++;render();}}
 function prevPage(){if(page>0){page--;render();}}
-function render(){renderFixtures();renderTable();renderScorers();}
+function render(){renderFixtures();renderTable();}
 render();
 </script>
+
 </body>
 </html>
