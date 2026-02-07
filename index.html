@@ -11,117 +11,75 @@
   --pl-pink:#ff2e92;
   --bg:#f5f6fa;
 }
-body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:var(--bg);
-}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);}
 header{
   background:linear-gradient(90deg,var(--pl-purple),var(--pl-pink));
-  color:#fff;
-  padding:16px;
-  text-align:center;
-  font-size:22px;
-  font-weight:bold;
+  color:#fff;padding:16px;text-align:center;
+  font-size:22px;font-weight:bold;
 }
 nav{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin:12px;
+  display:flex;justify-content:center;gap:10px;
+  margin:12px;flex-wrap:wrap;
 }
 nav button{
-  padding:8px 16px;
-  border:none;
-  border-radius:20px;
-  background:var(--pl-purple);
-  color:#fff;
-  cursor:pointer;
+  padding:8px 16px;border:none;border-radius:20px;
+  background:var(--pl-purple);color:#fff;cursor:pointer;
 }
 section{display:none;padding:10px;}
 section.active{display:block;}
 
 table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  font-size:14px;
+  width:100%;border-collapse:collapse;
+  background:#fff;font-size:14px;
 }
 th,td{
-  padding:6px;
-  text-align:center;
+  padding:6px;text-align:center;
   border-bottom:1px solid #ddd;
 }
-th{
-  background:var(--pl-purple);
-  color:#fff;
-}
-.team{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.team img{
-  width:22px;
-  height:22px;
-  object-fit:contain;
-}
+th{background:var(--pl-purple);color:#fff;}
+
+.team{display:flex;align-items:center;gap:6px;}
+.team img{width:22px;height:22px;object-fit:contain;}
 
 .champ{background:#e7ffe7;}
 .relegate{background:#ffe7e7;}
 
 .form span{
-  display:inline-block;
-  width:18px;
-  height:18px;
-  line-height:18px;
-  border-radius:50%;
-  color:#fff;
-  font-size:11px;
-  margin:0 1px;
+  display:inline-block;width:18px;height:18px;
+  line-height:18px;border-radius:50%;
+  color:#fff;font-size:11px;margin:0 1px;
 }
 .W{background:#2ecc71;}
 .D{background:#f1c40f;}
 .L{background:#e74c3c;}
 
-.round-title{
-  margin:14px 0 6px;
-  font-weight:bold;
-  color:var(--pl-purple);
-}
+.round-title{margin:14px 0 6px;font-weight:bold;color:var(--pl-purple);}
 
 .fixture{
-  background:#fff;
-  margin-bottom:8px;
-  padding:10px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  background:#fff;margin-bottom:8px;
+  padding:10px;border-radius:10px;
+}
+.match-row{
+  display:flex;align-items:center;justify-content:space-between;
 }
 .score{
-  display:flex;
-  align-items:center;
-  gap:6px;
+  display:flex;align-items:center;gap:6px;
 }
-.score input{
-  width:42px;
-  text-align:center;
-  font-size:16px;
+.score input{width:42px;text-align:center;font-size:16px;}
+
+.event-box{
+  margin-top:6px;font-size:12px;
+}
+.event-box input,.event-box select{
+  font-size:12px;padding:2px;
 }
 
 .controls{
-  display:flex;
-  justify-content:space-between;
-  margin:12px 0;
+  display:flex;justify-content:space-between;margin:12px 0;
 }
 .controls button{
-  padding:8px 14px;
-  border:none;
-  border-radius:10px;
-  background:var(--pl-purple);
-  color:#fff;
-  cursor:pointer;
+  padding:8px 14px;border:none;border-radius:10px;
+  background:var(--pl-purple);color:#fff;cursor:pointer;
 }
 </style>
 </head>
@@ -133,26 +91,28 @@ th{
 <nav>
   <button onclick="showPage('table')">Table</button>
   <button onclick="showPage('fixtures')">Fixtures</button>
-  <button onclick="showPage('stats')">Stats</button>
+  <button onclick="showPage('scorers')">Top Scorers</button>
+  <button onclick="showPage('yellow')">Yellow Cards</button>
+  <button onclick="showPage('red')">Red Cards</button>
 </nav>
 
+<!-- TABLE -->
 <section id="table" class="active">
 <table>
 <thead>
 <tr>
 <th>#</th><th>Club</th>
 <th>P</th><th>W</th><th>D</th><th>L</th>
-<th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
-<th>Form</th>
+<th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Form</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
 </section>
 
+<!-- FIXTURES -->
 <section id="fixtures">
 <div id="fixtureList"></div>
-
 <div class="controls">
   <button onclick="prevPage()">Prev</button>
   <button onclick="saveResults()">Save</button>
@@ -160,29 +120,31 @@ th{
   <button onclick="nextPage()">Next</button>
 </div>
 </section>
-<section id="stats">
-<h3>🟨🟥 Cards</h3>
-<table>
-<thead>
-<tr>
-<th>Match</th><th>Team</th><th>🟨</th><th>🟥</th>
-</tr>
-</thead>
-<tbody id="cardBody"></tbody>
-</table>
 
-<h3 style="margin-top:20px">⚽ Top Scorer</h3>
-<input id="scorerName" placeholder="Player name">
-<input id="scorerGoals" type="number" min="1" placeholder="Goals">
-<button onclick="addScorer()">Add</button>
-<table style="margin-top:10px">
-<thead>
-<tr><th>#</th><th>Player</th><th>Goals</th></tr>
-</thead>
+<!-- STATS -->
+<section id="scorers">
+<table>
+<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Goals</th></tr></thead>
 <tbody id="scorerBody"></tbody>
 </table>
 </section>
+
+<section id="yellow">
+<table>
+<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Yellow</th></tr></thead>
+<tbody id="yellowBody"></tbody>
+</table>
+</section>
+
+<section id="red">
+<table>
+<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Red</th></tr></thead>
+<tbody id="redBody"></tbody>
+</table>
+</section>
+
 <script>
+/* ===== TEAMS ===== */
 const teams=[
  {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
  {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"},
@@ -192,91 +154,64 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ===== FIXTURES 15 ROUNDS (45 MATCHES) ===== */
+/* ===== FIXTURES 15 ROUNDS (ครบ) ===== */
 let fixtures=[
-/* รอบ 1 */
-{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
-{round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:1,h:"Marseille",a:"PSG",hs:"",as:"",locked:false},
-
-/* รอบ 2 */
-{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
-{round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
-{round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
-
-/* รอบ 3 */
-{round:3,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
-{round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
-
-/* รอบ 4 */
-{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:4,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
-{round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
-
-/* รอบ 5 */
-{round:5,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
-{round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
-{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
-
-/* รอบ 6 */
-{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",locked:false},
-{round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",locked:false},
-{round:6,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
-
-/* รอบ 7 */
-{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",locked:false},
-{round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",locked:false},
-{round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",locked:false},
-
-/* รอบ 8 */
-{round:8,h:"Marseille",a:"Man United",hs:"",as:"",locked:false},
-{round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",locked:false},
-{round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",locked:false},
-
-/* รอบ 9 */
-{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",locked:false},
-{round:9,h:"PSG",a:"AC Milan",hs:"",as:"",locked:false},
-{round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",locked:false},
-
-/* รอบ 10 */
-{round:10,h:"PSG",a:"Man United",hs:"",as:"",locked:false},
-{round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",locked:false},
-{round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",locked:false},
-
-/* รอบ 11 */
-{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",locked:false},
-{round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:11,h:"PSG",a:"Marseille",hs:"",as:"",locked:false},
-
-/* รอบ 12 */
-{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",locked:false},
-{round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",locked:false},
-{round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",locked:false},
-
-/* รอบ 13 */
-{round:13,h:"Man United",a:"Marseille",hs:"",as:"",locked:false},
-{round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",locked:false},
-
-/* รอบ 14 */
-{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",locked:false},
-{round:14,h:"AC Milan",a:"PSG",hs:"",as:"",locked:false},
-{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",locked:false},
-
-/* รอบ 15 */
-{round:15,h:"Man United",a:"PSG",hs:"",as:"",locked:false},
-{round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",locked:false},
-{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",locked:false},
+/* R1 */{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
+{round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:1,h:"Marseille",a:"PSG",hs:"",as:"",events:[]},
+/* R2 */{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
+{round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",events:[]},
+{round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",events:[]},
+/* R3 */{round:3,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+{round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
+/* R4 */{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:4,h:"AC Milan",a:"PSG",hs:"",as:"",events:[]},
+{round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",events:[]},
+/* R5 */{round:5,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+{round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
+{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
+/* R6 */{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",events:[]},
+{round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",events:[]},
+{round:6,h:"PSG",a:"Marseille",hs:"",as:"",events:[]},
+/* R7 */{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",events:[]},
+{round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",events:[]},
+{round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",events:[]},
+/* R8 */{round:8,h:"Marseille",a:"Man United",hs:"",as:"",events:[]},
+{round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",events:[]},
+{round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",events:[]},
+/* R9 */{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",events:[]},
+{round:9,h:"PSG",a:"AC Milan",hs:"",as:"",events:[]},
+{round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",events:[]},
+/* R10 */{round:10,h:"PSG",a:"Man United",hs:"",as:"",events:[]},
+{round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",events:[]},
+{round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",events:[]},
+/* R11 */{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
+{round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:11,h:"PSG",a:"Marseille",hs:"",as:"",events:[]},
+/* R12 */{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
+{round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",events:[]},
+{round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",events:[]},
+/* R13 */{round:13,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+{round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
+/* R14 */{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
+{round:14,h:"AC Milan",a:"PSG",hs:"",as:"",events:[]},
+{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",events:[]},
+/* R15 */{round:15,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+{round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
+{round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
 ];
 
-const perPage=6;
-let page=0;
-  let cards = JSON.parse(localStorage.getItem("efs2_cards")) || {};
-let scorers = JSON.parse(localStorage.getItem("efs2_scorers")) || [];
+/* ===== PAGINATION ===== */
+const perPage=6; let page=0;
 
+/* ===== STORAGE ===== */
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved) fixtures=saved;
+
+/* ===== FUNCTIONS ===== */
+function getLogo(n){return teams.find(t=>t.name===n).logo;}
 
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
@@ -288,63 +223,67 @@ function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
  let lastRound=null;
-
  fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
   const idx=page*perPage+i;
   if(m.round!==lastRound){
     box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
     lastRound=m.round;
   }
-
   box.innerHTML+=`
   <div class="fixture">
+   <div class="match-row">
     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
     <div class="score">
-      <input type="number" min="0" value="${m.hs}" ${m.locked?"disabled":""}
-        onchange="updateScore(${idx},'hs',this.value)">
+      <input type="number" min="0" value="${m.hs}" onchange="setScore(${idx},'hs',this.value)">
       -
-      <input type="number" min="0" value="${m.as}" ${m.locked?"disabled":""}
-        onchange="updateScore(${idx},'as',this.value)">
+      <input type="number" min="0" value="${m.as}" onchange="setScore(${idx},'as',this.value)">
     </div>
     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
+   </div>
+   <div class="event-box">
+    <select id="etype${idx}">
+      <option value="goal">⚽ Goal</option>
+      <option value="yellow">🟨 Yellow</option>
+      <option value="red">🟥 Red</option>
+    </select>
+    <input placeholder="Player name" id="pname${idx}">
+    <select id="pteam${idx}">
+      <option>${m.h}</option>
+      <option>${m.a}</option>
+    </select>
+    <button onclick="addEvent(${idx})">Add</button>
+   </div>
   </div>`;
  });
 }
 
-function updateScore(i,k,v){
- fixtures[i][k]=v;
- if(fixtures[i].hs!=="" && fixtures[i].as!==""){
-  fixtures[i].locked=true;
- }
- renderTable();
+function setScore(i,k,v){fixtures[i][k]=v;renderTable();}
+function addEvent(i){
+ const type=document.getElementById("etype"+i).value;
+ const name=document.getElementById("pname"+i).value;
+ const team=document.getElementById("pteam"+i).value;
+ if(!name) return;
+ fixtures[i].events.push({type,player:name,team});
+ renderStats();
 }
 
 function renderTable(){
  let stats={};
  teams.forEach(t=>stats[t.name]={P:0,W:0,D:0,L:0,GF:0,GA:0,form:[]});
-
  fixtures.forEach(m=>{
-  if(m.hs!=="" && m.as!==""){
-   let h=stats[m.h], a=stats[m.a];
-   let hs=+m.hs, as=+m.as;
-
-   h.P++; a.P++;
-   h.GF+=hs; h.GA+=as;
-   a.GF+=as; a.GA+=hs;
-
+  if(m.hs!==""&&m.as!==""){
+   let h=stats[m.h],a=stats[m.a],hs=+m.hs,as=+m.as;
+   h.P++;a.P++;h.GF+=hs;h.GA+=as;a.GF+=as;a.GA+=hs;
    if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
    else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
    else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
   }
  });
-
  let arr=Object.keys(stats).map(n=>{
   let s=stats[n];
   return {...s,name:n,GD:s.GF-s.GA,Pts:s.W*3+s.D};
  }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
-
- document.getElementById("tableBody").innerHTML=
- arr.map((t,i)=>`
+ tableBody.innerHTML=arr.map((t,i)=>`
  <tr class="${i==0?'champ':i>=4?'relegate':''}">
   <td>${i+1}</td>
   <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
@@ -355,59 +294,31 @@ function renderTable(){
  </tr>`).join("");
 }
 
-function getLogo(n){return teams.find(t=>t.name===n).logo;}
-function saveResults(){
- localStorage.setItem("efs2",JSON.stringify(fixtures));
- alert("Saved!");
+function renderStats(){
+ let p={};
+ fixtures.forEach(m=>{
+  m.events.forEach(e=>{
+   p[e.player]=p[e.player]||{team:e.team,g:0,y:0,r:0};
+   if(e.type==="goal")p[e.player].g++;
+   if(e.type==="yellow")p[e.player].y++;
+   if(e.type==="red")p[e.player].r++;
+  });
+ });
+ let arr=Object.entries(p);
+ scorerBody.innerHTML=arr.sort((a,b)=>b[1].g-a[1].g)
+  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].g}</td></tr>`).join("");
+ yellowBody.innerHTML=arr.sort((a,b)=>b[1].y-a[1].y)
+  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].y}</td></tr>`).join("");
+ redBody.innerHTML=arr.sort((a,b)=>b[1].r-a[1].r)
+  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].r}</td></tr>`).join("");
 }
-function resetAll(){
- if(confirm("Reset all data?")){
-  localStorage.removeItem("efs2");
-  location.reload();
- }
-}
+
+function saveResults(){localStorage.setItem("efs2",JSON.stringify(fixtures));alert("Saved");}
+function resetAll(){if(confirm("Reset all?")){localStorage.removeItem("efs2");location.reload();}}
 function nextPage(){if((page+1)*perPage<fixtures.length){page++;render();}}
 function prevPage(){if(page>0){page--;render();}}
-function renderCards(){
- let html="";
- fixtures.forEach((m,i)=>{
-  let c = cards[i] || {hy:0,hr:0,ay:0,ar:0};
-
-  html+=`
-  <tr>
-   <td>${m.h} vs ${m.a}</td>
-   <td>${m.h}</td>
-   <td><button onclick="addCard(${i},'hy')">+</button> ${c.hy}</td>
-   <td><button onclick="addCard(${i},'hr')">+</button> ${c.hr}</td>
-  </tr>
-  <tr>
-   <td></td>
-   <td>${m.a}</td>
-   <td><button onclick="addCard(${i},'ay')">+</button> ${c.ay}</td>
-   <td><button onclick="addCard(${i},'ar')">+</button> ${c.ar}</td>
-  </tr>`;
- });
- document.getElementById("cardBody").innerHTML=html;
-}
-
-function addCard(i,type){
- cards[i]=cards[i]||{hy:0,hr:0,ay:0,ar:0};
- cards[i][type]++;
- localStorage.setItem("efs2_cards",JSON.stringify(cards));
- renderCards();
-}
-function addScorer(){
-  const name = document.getElementById("scorerName").value;
-  const goals = document.getElementById("scorerGoals").value;
-
-  alert(name + " ยิง " + goals + " ประตู");
-}
-function render(){
-  renderFixtures();
-  renderTable();
-  renderCards();
-}
-  render();
+function render(){renderFixtures();renderTable();renderStats();}
+render();
 </script>
 
 </body>
