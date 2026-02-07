@@ -395,10 +395,12 @@ function addCard(i,type){
  cards[i][type]++;
  localStorage.setItem("efs2_cards",JSON.stringify(cards));
  renderCards();
-}function render(){
+}
+
+function render(){
   renderFixtures();
-  renderTable();}
-render();
+  renderTable();
+}
 </script>
 
 </body>
