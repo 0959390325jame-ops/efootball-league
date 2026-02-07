@@ -38,8 +38,13 @@ th,td{
 }
 th{background:var(--pl-purple);color:#fff;}
 
-.team{display:flex;align-items:center;gap:6px;}
+.team{display:flex;align-items:center;gap:6px;justify-content:center;}
 .team img{width:22px;height:22px;object-fit:contain;}
+
+.player{
+  display:flex;align-items:center;gap:6px;justify-content:center;
+}
+.player img{width:20px;height:20px;object-fit:contain;}
 
 .champ{background:#e7ffe7;}
 .relegate{background:#ffe7e7;}
@@ -124,21 +129,27 @@ th{background:var(--pl-purple);color:#fff;}
 <!-- STATS -->
 <section id="scorers">
 <table>
-<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Goals</th></tr></thead>
+<thead>
+<tr><th>#</th><th>Player</th><th>Team</th><th>Goals</th></tr>
+</thead>
 <tbody id="scorerBody"></tbody>
 </table>
 </section>
 
 <section id="yellow">
 <table>
-<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Yellow</th></tr></thead>
+<thead>
+<tr><th>#</th><th>Player</th><th>Team</th><th>Yellow</th></tr>
+</thead>
 <tbody id="yellowBody"></tbody>
 </table>
 </section>
 
 <section id="red">
 <table>
-<thead><tr><th>#</th><th>Player</th><th>Team</th><th>Red</th></tr></thead>
+<thead>
+<tr><th>#</th><th>Player</th><th>Team</th><th>Red</th></tr>
+</thead>
 <tbody id="redBody"></tbody>
 </table>
 </section>
@@ -154,64 +165,77 @@ const teams=[
  {name:"PSG",logo:"https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg"}
 ];
 
-/* ===== FIXTURES 15 ROUNDS (ครบ) ===== */
+/* ===== FIXTURES 15 ROUNDS ===== */
 let fixtures=[
-/* R1 */{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
+{round:1,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
 {round:1,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:1,h:"Marseille",a:"PSG",hs:"",as:"",events:[]},
-/* R2 */{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
+
+{round:2,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
 {round:2,h:"AC Milan",a:"Marseille",hs:"",as:"",events:[]},
 {round:2,h:"Real Madrid",a:"PSG",hs:"",as:"",events:[]},
-/* R3 */{round:3,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+
+{round:3,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
 {round:3,h:"AC Milan",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:3,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
-/* R4 */{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
+
+{round:4,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:4,h:"AC Milan",a:"PSG",hs:"",as:"",events:[]},
 {round:4,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",events:[]},
-/* R5 */{round:5,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+
+{round:5,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
 {round:5,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
 {round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
-/* R6 */{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",events:[]},
+
+{round:6,h:"AC Milan",a:"Man United",hs:"",as:"",events:[]},
 {round:6,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:"",events:[]},
 {round:6,h:"PSG",a:"Marseille",hs:"",as:"",events:[]},
-/* R7 */{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",events:[]},
+
+{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",events:[]},
 {round:7,h:"Marseille",a:"AC Milan",hs:"",as:"",events:[]},
 {round:7,h:"PSG",a:"Real Madrid",hs:"",as:"",events:[]},
-/* R8 */{round:8,h:"Marseille",a:"Man United",hs:"",as:"",events:[]},
+
+{round:8,h:"Marseille",a:"Man United",hs:"",as:"",events:[]},
 {round:8,h:"Real Madrid",a:"AC Milan",hs:"",as:"",events:[]},
 {round:8,h:"PSG",a:"Atletico Madrid",hs:"",as:"",events:[]},
-/* R9 */{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",events:[]},
+
+{round:9,h:"Real Madrid",a:"Man United",hs:"",as:"",events:[]},
 {round:9,h:"PSG",a:"AC Milan",hs:"",as:"",events:[]},
 {round:9,h:"Marseille",a:"Atletico Madrid",hs:"",as:"",events:[]},
-/* R10 */{round:10,h:"PSG",a:"Man United",hs:"",as:"",events:[]},
+
+{round:10,h:"PSG",a:"Man United",hs:"",as:"",events:[]},
 {round:10,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",events:[]},
 {round:10,h:"Marseille",a:"Real Madrid",hs:"",as:"",events:[]},
-/* R11 */{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
+
+{round:11,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
 {round:11,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:11,h:"PSG",a:"Marseille",hs:"",as:"",events:[]},
-/* R12 */{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
+
+{round:12,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
 {round:12,h:"AC Milan",a:"Marseille",hs:"",as:"",events:[]},
 {round:12,h:"Real Madrid",a:"PSG",hs:"",as:"",events:[]},
-/* R13 */{round:13,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+
+{round:13,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
 {round:13,h:"AC Milan",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:13,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
-/* R14 */{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
+
+{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
 {round:14,h:"AC Milan",a:"PSG",hs:"",as:"",events:[]},
 {round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:"",events:[]},
-/* R15 */{round:15,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+
+{round:15,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
 {round:15,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
 {round:15,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
 ];
 
-/* ===== PAGINATION ===== */
 const perPage=6; let page=0;
-
-/* ===== STORAGE ===== */
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved) fixtures=saved;
 
 /* ===== FUNCTIONS ===== */
-function getLogo(n){return teams.find(t=>t.name===n).logo;}
+function getLogo(name){
+ return teams.find(t=>t.name===name)?.logo||"";
+}
 
 function showPage(id){
  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
@@ -258,6 +282,7 @@ function renderFixtures(){
 }
 
 function setScore(i,k,v){fixtures[i][k]=v;renderTable();}
+
 function addEvent(i){
  const type=document.getElementById("etype"+i).value;
  const name=document.getElementById("pname"+i).value;
@@ -305,12 +330,33 @@ function renderStats(){
   });
  });
  let arr=Object.entries(p);
+
  scorerBody.innerHTML=arr.sort((a,b)=>b[1].g-a[1].g)
-  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].g}</td></tr>`).join("");
+ .map((p,i)=>`
+ <tr>
+  <td>${i+1}</td>
+  <td>${p[0]}</td>
+  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
+  <td>${p[1].g}</td>
+ </tr>`).join("");
+
  yellowBody.innerHTML=arr.sort((a,b)=>b[1].y-a[1].y)
-  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].y}</td></tr>`).join("");
+ .map((p,i)=>`
+ <tr>
+  <td>${i+1}</td>
+  <td>${p[0]}</td>
+  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
+  <td>${p[1].y}</td>
+ </tr>`).join("");
+
  redBody.innerHTML=arr.sort((a,b)=>b[1].r-a[1].r)
-  .map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]}</td><td>${p[1].team}</td><td>${p[1].r}</td></tr>`).join("");
+ .map((p,i)=>`
+ <tr>
+  <td>${i+1}</td>
+  <td>${p[0]}</td>
+  <td class="team"><img src="${getLogo(p[1].team)}">${p[1].team}</td>
+  <td>${p[1].r}</td>
+ </tr>`).join("");
 }
 
 function saveResults(){localStorage.setItem("efs2",JSON.stringify(fixtures));alert("Saved");}
