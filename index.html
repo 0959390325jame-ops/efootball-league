@@ -396,7 +396,12 @@ function addCard(i,type){
  localStorage.setItem("efs2_cards",JSON.stringify(cards));
  renderCards();
 }
+function addScorer(){
+  const name = document.getElementById("scorerName").value;
+  const goals = document.getElementById("scorerGoals").value;
 
+  alert(name + " ยิง " + goals + " ประตู");
+}
 function render(){
   renderFixtures();
   renderTable();
