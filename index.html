@@ -133,6 +133,7 @@ th{
 <nav>
   <button onclick="showPage('table')">Table</button>
   <button onclick="showPage('fixtures')">Fixtures</button>
+  <button onclick="showPage('stats')">Stats</button>
 </nav>
 
 <section id="table" class="active">
@@ -159,7 +160,28 @@ th{
   <button onclick="nextPage()">Next</button>
 </div>
 </section>
+<section id="stats">
+<h3>🟨🟥 Cards</h3>
+<table>
+<thead>
+<tr>
+<th>Match</th><th>Team</th><th>🟨</th><th>🟥</th>
+</tr>
+</thead>
+<tbody id="cardBody"></tbody>
+</table>
 
+<h3 style="margin-top:20px">⚽ Top Scorer</h3>
+<input id="scorerName" placeholder="Player name">
+<input id="scorerGoals" type="number" min="1" placeholder="Goals">
+<button onclick="addScorer()">Add</button>
+<table style="margin-top:10px">
+<thead>
+<tr><th>#</th><th>Player</th><th>Goals</th></tr>
+</thead>
+<tbody id="scorerBody"></tbody>
+</table>
+</section>
 <script>
 const teams=[
  {name:"Man United",logo:"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
@@ -250,6 +272,8 @@ let fixtures=[
 
 const perPage=6;
 let page=0;
+  let cards = JSON.parse(localStorage.getItem("efs2_cards")) || {};
+let scorers = JSON.parse(localStorage.getItem("efs2_scorers")) || [];
 
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved) fixtures=saved;
@@ -344,7 +368,36 @@ function resetAll(){
 }
 function nextPage(){if((page+1)*perPage<fixtures.length){page++;render();}}
 function prevPage(){if(page>0){page--;render();}}
-function render(){renderFixtures();renderTable();}
+function renderCards(){
+ let html="";
+ fixtures.forEach((m,i)=>{
+  let c = cards[i] || {hy:0,hr:0,ay:0,ar:0};
+
+  html+=`
+  <tr>
+   <td>${m.h} vs ${m.a}</td>
+   <td>${m.h}</td>
+   <td><button onclick="addCard(${i},'hy')">+</button> ${c.hy}</td>
+   <td><button onclick="addCard(${i},'hr')">+</button> ${c.hr}</td>
+  </tr>
+  <tr>
+   <td></td>
+   <td>${m.a}</td>
+   <td><button onclick="addCard(${i},'ay')">+</button> ${c.ay}</td>
+   <td><button onclick="addCard(${i},'ar')">+</button> ${c.ar}</td>
+  </tr>`;
+ });
+ document.getElementById("cardBody").innerHTML=html;
+}
+
+function addCard(i,type){
+ cards[i]=cards[i]||{hy:0,hr:0,ay:0,ar:0};
+ cards[i][type]++;
+ localStorage.setItem("efs2_cards",JSON.stringify(cards));
+ renderCards();
+}function render(){
+  renderFixtures();
+  renderTable();}
 render();
 </script>
 
