@@ -2,62 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>eFootball League SS2</title>
+<title>eFootball League</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-:root{
-  --pl-purple:#3b0057;
-  --pl-pink:#ff2e92;
-  --bg:#f5f6fa;
-}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6fb}
 header{
-  background:linear-gradient(90deg,var(--pl-purple),var(--pl-pink));
+  background:linear-gradient(90deg,#3b0057,#ff2e92);
   color:#fff;padding:16px;text-align:center;
   font-size:22px;font-weight:bold;
 }
-nav{display:flex;justify-content:center;gap:10px;margin:12px;flex-wrap:wrap;}
+nav{display:flex;justify-content:center;gap:10px;margin:12px}
 nav button{
-  padding:8px 16px;border:none;border-radius:20px;
-  background:var(--pl-purple);color:#fff;cursor:pointer;
+  padding:8px 18px;border:none;border-radius:20px;
+  background:#3b0057;color:#fff;cursor:pointer;
 }
-section{display:none;padding:10px;}
-section.active{display:block;}
+section{display:none;padding:10px}
+section.active{display:block}
 
-table{width:100%;border-collapse:collapse;background:#fff;font-size:14px;}
-th,td{padding:6px;text-align:center;border-bottom:1px solid #ddd;}
-th{background:var(--pl-purple);color:#fff;}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+th,td{padding:6px;border-bottom:1px solid #ddd;text-align:center}
+th{background:#3b0057;color:#fff}
 
-.team{display:flex;align-items:center;gap:6px;justify-content:center;}
-.team img{width:22px;height:22px;object-fit:contain;}
+.team{display:flex;align-items:center;gap:6px;justify-content:center}
+.team img{width:22px;height:22px;object-fit:contain}
 
 .form span{
-  display:inline-block;width:18px;height:18px;line-height:18px;
-  border-radius:50%;color:#fff;font-size:11px;margin:0 1px;
+ display:inline-block;width:18px;height:18px;
+ line-height:18px;border-radius:50%;
+ color:#fff;font-size:11px;margin:0 1px
 }
-.W{background:#2ecc71;}
-.D{background:#f1c40f;}
-.L{background:#e74c3c;}
+.W{background:#2ecc71}
+.D{background:#f1c40f}
+.L{background:#e74c3c}
 
-.champion{background:#d4edda;font-weight:bold;}
-.relegation{background:#f8d7da;font-weight:bold;}
+.champion{background:#d4edda;font-weight:bold}
+.relegation{background:#f8d7da;font-weight:bold}
 
-.round-title{margin:14px 0 6px;font-weight:bold;color:var(--pl-purple);}
-.fixture{background:#fff;margin-bottom:8px;padding:10px;border-radius:10px;}
-.match-row{display:flex;align-items:center;justify-content:space-between;}
-.score input{width:42px;text-align:center;font-size:16px;}
+.round-title{margin:14px 0 6px;font-weight:bold;color:#3b0057}
+.fixture{background:#fff;margin-bottom:8px;padding:10px;border-radius:10px}
+.match-row{display:flex;align-items:center;justify-content:space-between}
+.score input{width:40px;text-align:center;font-size:16px}
 
-.controls{display:flex;justify-content:space-between;margin:12px 0;}
+.controls{display:flex;justify-content:space-between;margin:12px 0}
 .controls button{
-  padding:8px 14px;border:none;border-radius:10px;
-  background:var(--pl-purple);color:#fff;cursor:pointer;
+ padding:8px 16px;border:none;border-radius:10px;
+ background:#3b0057;color:#fff;cursor:pointer
 }
 </style>
 </head>
 
 <body>
 
-<header>🏆 eFootball League SS2</header>
+<header>🏆 eFootball League</header>
 
 <nav>
   <button onclick="showPage('table')">Table</button>
@@ -98,104 +95,101 @@ const teams=[
  {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"}
 ];
 
-/* ===== FIXTURES (21 ROUNDS / 63 MATCHES) ===== */
+/* ===== FIXTURES : 21 ROUNDS ===== */
 let fixtures=[
-{round:1,h:"Newcastle",a:"Marseille",hs:"",as:""},
-{round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
-{round:1,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
+ {round:1,h:"Newcastle",a:"Man United",hs:"",as:""},
+ {round:1,h:"Marseille",a:"Atletico Madrid",hs:"",as:""},
+ {round:1,h:"Real Madrid",a:"PSG",hs:"",as:""},
 
-{round:2,h:"Newcastle",a:"PSG",hs:"",as:""},
-{round:2,h:"Man United",a:"Real Madrid",hs:"",as:""},
-{round:2,h:"Marseille",a:"AC Milan",hs:"",as:""},
+ {round:2,h:"Newcastle",a:"Marseille",hs:"",as:""},
+ {round:2,h:"Man United",a:"Real Madrid",hs:"",as:""},
+ {round:2,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:3,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
-{round:3,h:"Man United",a:"AC Milan",hs:"",as:""},
-{round:3,h:"Marseille",a:"PSG",hs:"",as:""},
+ {round:3,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
+ {round:3,h:"Man United",a:"PSG",hs:"",as:""},
+ {round:3,h:"Marseille",a:"AC Milan",hs:"",as:""},
 
-{round:4,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
-{round:4,h:"Man United",a:"PSG",hs:"",as:""},
-{round:4,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
+ {round:4,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
+ {round:4,h:"Man United",a:"Marseille",hs:"",as:""},
+ {round:4,h:"PSG",a:"AC Milan",hs:"",as:""},
 
-{round:5,h:"Newcastle",a:"AC Milan",hs:"",as:""},
-{round:5,h:"Man United",a:"Marseille",hs:"",as:""},
-{round:5,h:"Atletico Madrid",a:"PSG",hs:"",as:""},
+ {round:5,h:"Newcastle",a:"PSG",hs:"",as:""},
+ {round:5,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
+ {round:5,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:6,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
-{round:6,h:"Marseille",a:"Real Madrid",hs:"",as:""},
-{round:6,h:"PSG",a:"AC Milan",hs:"",as:""},
+ {round:6,h:"Newcastle",a:"AC Milan",hs:"",as:""},
+ {round:6,h:"Man United",a:"Real Madrid",hs:"",as:""},
+ {round:6,h:"Marseille",a:"PSG",hs:"",as:""},
 
-{round:7,h:"Newcastle",a:"Man United",hs:"",as:""},
-{round:7,h:"Marseille",a:"Atletico Madrid",hs:"",as:""},
-{round:7,h:"PSG",a:"Real Madrid",hs:"",as:""},
+ /* ====== รอบ 7–21 (วนเจอครบ 3 รอบ) ====== */
+ {round:7,h:"Man United",a:"Newcastle",hs:"",as:""},
+ {round:7,h:"Atletico Madrid",a:"Marseille",hs:"",as:""},
+ {round:7,h:"PSG",a:"Real Madrid",hs:"",as:""},
 
-{round:8,h:"Marseille",a:"Newcastle",hs:"",as:""},
-{round:8,h:"Atletico Madrid",a:"Man United",hs:"",as:""},
-{round:8,h:"AC Milan",a:"Real Madrid",hs:"",as:""},
+ {round:8,h:"Marseille",a:"Newcastle",hs:"",as:""},
+ {round:8,h:"Real Madrid",a:"Man United",hs:"",as:""},
+ {round:8,h:"AC Milan",a:"Atletico Madrid",hs:"",as:""},
 
-{round:9,h:"PSG",a:"Newcastle",hs:"",as:""},
-{round:9,h:"Real Madrid",a:"Man United",hs:"",as:""},
-{round:9,h:"AC Milan",a:"Marseille",hs:"",as:""},
+ {round:9,h:"Atletico Madrid",a:"Newcastle",hs:"",as:""},
+ {round:9,h:"PSG",a:"Man United",hs:"",as:""},
+ {round:9,h:"AC Milan",a:"Marseille",hs:"",as:""},
 
-{round:10,h:"Atletico Madrid",a:"Newcastle",hs:"",as:""},
-{round:10,h:"AC Milan",a:"Man United",hs:"",as:""},
-{round:10,h:"PSG",a:"Marseille",hs:"",as:""},
+ {round:10,h:"Real Madrid",a:"Newcastle",hs:"",as:""},
+ {round:10,h:"Marseille",a:"Man United",hs:"",as:""},
+ {round:10,h:"AC Milan",a:"PSG",hs:"",as:""},
 
-{round:11,h:"Real Madrid",a:"Newcastle",hs:"",as:""},
-{round:11,h:"PSG",a:"Man United",hs:"",as:""},
-{round:11,h:"AC Milan",a:"Atletico Madrid",hs:"",as:""},
+ {round:11,h:"PSG",a:"Newcastle",hs:"",as:""},
+ {round:11,h:"Atletico Madrid",a:"Man United",hs:"",as:""},
+ {round:11,h:"AC Milan",a:"Real Madrid",hs:"",as:""},
 
-{round:12,h:"AC Milan",a:"Newcastle",hs:"",as:""},
-{round:12,h:"Marseille",a:"Man United",hs:"",as:""},
-{round:12,h:"PSG",a:"Atletico Madrid",hs:"",as:""},
+ {round:12,h:"AC Milan",a:"Newcastle",hs:"",as:""},
+ {round:12,h:"Real Madrid",a:"Marseille",hs:"",as:""},
+ {round:12,h:"PSG",a:"Atletico Madrid",hs:"",as:""},
 
-{round:13,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:""},
-{round:13,h:"Real Madrid",a:"Marseille",hs:"",as:""},
-{round:13,h:"AC Milan",a:"PSG",hs:"",as:""},
+ {round:13,h:"Newcastle",a:"Man United",hs:"",as:""},
+ {round:13,h:"Marseille",a:"PSG",hs:"",as:""},
+ {round:13,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
 
-{round:14,h:"Man United",a:"Newcastle",hs:"",as:""},
-{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:""},
-{round:14,h:"Real Madrid",a:"PSG",hs:"",as:""},
+ {round:14,h:"Newcastle",a:"Marseille",hs:"",as:""},
+ {round:14,h:"Man United",a:"AC Milan",hs:"",as:""},
+ {round:14,h:"PSG",a:"Atletico Madrid",hs:"",as:""},
 
-{round:15,h:"Newcastle",a:"Marseille",hs:"",as:""},
-{round:15,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
-{round:15,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
+ {round:15,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
+ {round:15,h:"Man United",a:"PSG",hs:"",as:""},
+ {round:15,h:"Marseille",a:"AC Milan",hs:"",as:""},
 
-{round:16,h:"Newcastle",a:"PSG",hs:"",as:""},
-{round:16,h:"Man United",a:"Real Madrid",hs:"",as:""},
-{round:16,h:"Marseille",a:"AC Milan",hs:"",as:""},
+ {round:16,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
+ {round:16,h:"Man United",a:"Marseille",hs:"",as:""},
+ {round:16,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:17,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
-{round:17,h:"Man United",a:"AC Milan",hs:"",as:""},
-{round:17,h:"Marseille",a:"PSG",hs:"",as:""},
+ {round:17,h:"Newcastle",a:"PSG",hs:"",as:""},
+ {round:17,h:"Man United",a:"Real Madrid",hs:"",as:""},
+ {round:17,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:18,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
-{round:18,h:"Man United",a:"PSG",hs:"",as:""},
-{round:18,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
+ {round:18,h:"Newcastle",a:"AC Milan",hs:"",as:""},
+ {round:18,h:"Marseille",a:"Real Madrid",hs:"",as:""},
+ {round:18,h:"PSG",a:"Man United",hs:"",as:""},
 
-{round:19,h:"Newcastle",a:"AC Milan",hs:"",as:""},
-{round:19,h:"Man United",a:"Marseille",hs:"",as:""},
-{round:19,h:"Atletico Madrid",a:"PSG",hs:"",as:""},
+ {round:19,h:"Man United",a:"Newcastle",hs:"",as:""},
+ {round:19,h:"PSG",a:"Marseille",hs:"",as:""},
+ {round:19,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:""},
 
-{round:20,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
-{round:20,h:"Marseille",a:"Real Madrid",hs:"",as:""},
-{round:20,h:"PSG",a:"AC Milan",hs:"",as:""},
+ {round:20,h:"Marseille",a:"Newcastle",hs:"",as:""},
+ {round:20,h:"AC Milan",a:"Man United",hs:"",as:""},
+ {round:20,h:"Atletico Madrid",a:"PSG",hs:"",as:""},
 
-{round:21,h:"Newcastle",a:"Man United",hs:"",as:""},
-{round:21,h:"Marseille",a:"Atletico Madrid",hs:"",as:""},
-{round:21,h:"PSG",a:"Real Madrid",hs:"",as:""}
+ {round:21,h:"Real Madrid",a:"Newcastle",hs:"",as:""},
+ {round:21,h:"Man United",a:"Marseille",hs:"",as:""},
+ {round:21,h:"AC Milan",a:"PSG",hs:"",as:""}
 ];
 
-/* ===== PAGINATION ===== */
 const roundsPerPage=2;
 let page=0;
 
-const saved=JSON.parse(localStorage.getItem("efs2"));
-if(saved)fixtures=saved;
+const saved=JSON.parse(localStorage.getItem("leagueSave"));
+if(saved) fixtures=saved;
 
-function getRounds(){
-  return [...new Set(fixtures.map(f=>f.round))].sort((a,b)=>a-b);
-}
-
+/* ===== FUNCTIONS ===== */
 function getLogo(n){return teams.find(t=>t.name===n)?.logo||"";}
 
 function showPage(id){
@@ -204,28 +198,32 @@ function showPage(id){
  render();
 }
 
+function getRounds(){
+ return [...new Set(fixtures.map(f=>f.round))].sort((a,b)=>a-b);
+}
+
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
-
  const rounds=getRounds();
- const show=rounds.slice(page*roundsPerPage,page*roundsPerPage+roundsPerPage);
+ const start=page*roundsPerPage;
+ const show=rounds.slice(start,start+roundsPerPage);
 
  show.forEach(r=>{
   box.innerHTML+=`<div class="round-title">Round ${r}</div>`;
   fixtures.filter(m=>m.round===r).forEach(m=>{
-    const i=fixtures.indexOf(m);
-    box.innerHTML+=`
-    <div class="fixture">
-      <div class="match-row">
-        <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-        <div class="score">
-          <input type="number" min="0" value="${m.hs}" onchange="setScore(${i},'hs',this.value)"> -
-          <input type="number" min="0" value="${m.as}" onchange="setScore(${i},'as',this.value)">
-        </div>
-        <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
-      </div>
-    </div>`;
+   const i=fixtures.indexOf(m);
+   box.innerHTML+=`
+   <div class="fixture">
+    <div class="match-row">
+     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+     <div class="score">
+      <input type="number" min="0" value="${m.hs}" onchange="setScore(${i},'hs',this.value)"> -
+      <input type="number" min="0" value="${m.as}" onchange="setScore(${i},'as',this.value)">
+     </div>
+     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
+    </div>
+   </div>`;
   });
  });
 }
@@ -243,31 +241,31 @@ function renderTable(){
   if(m.hs!==""&&m.as!==""){
    let h=s[m.h],a=s[m.a],hs=+m.hs,as=+m.as;
    h.P++;a.P++;h.GF+=hs;h.GA+=as;a.GF+=as;a.GA+=hs;
-   if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L");}
-   else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L");}
-   else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D");}
+   if(hs>as){h.W++;a.L++;h.form.unshift("W");a.form.unshift("L")}
+   else if(hs<as){a.W++;h.L++;a.form.unshift("W");h.form.unshift("L")}
+   else{h.D++;a.D++;h.form.unshift("D");a.form.unshift("D")}
   }
  });
 
- let arr=Object.keys(s).map(n=>({...s[n],name:n,GD:s[n].GF-s[n].GA,Pts:s[n].W*3+s[n].D}))
- .sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF);
+ let arr=Object.keys(s).map(n=>({...s[n],name:n,GD:s[n].GF-s[n].GA,Pts:s[n].W*3+s[n].D}));
+ arr.sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF);
 
- tableBody.innerHTML=arr.map((t,i)=>{
-  let cls=i===0?"champion":i===arr.length-1?"relegation":"";
-  return`
-  <tr class="${cls}">
+ const body=document.getElementById("tableBody");
+ body.innerHTML="";
+ arr.forEach((t,i)=>{
+  body.innerHTML+=`
+  <tr class="${i===0?'champion':i===arr.length-1?'relegation':''}">
    <td>${i+1}</td>
    <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
    <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td>
-   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td>
-   <td><b>${t.Pts}</b></td>
+   <td>${t.GF}</td><td>${t.GA}</td><td>${t.GD}</td><td>${t.Pts}</td>
    <td class="form">${t.form.slice(0,5).map(f=>`<span class="${f}">${f}</span>`).join("")}</td>
   </tr>`;
- }).join("");
+ });
 }
 
 function saveResults(){
- localStorage.setItem("efs2",JSON.stringify(fixtures));
+ localStorage.setItem("leagueSave",JSON.stringify(fixtures));
  alert("Saved");
 }
 
@@ -283,6 +281,7 @@ function render(){
  renderFixtures();
  renderTable();
 }
+
 render();
 </script>
 
