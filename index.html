@@ -117,83 +117,106 @@ const teams=[
  {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"}
 ];
 
-/* ===== FIXTURES : 18 ROUNDS (HOME / AWAY / SPECIAL) ===== */
+/* ===== FIXTURES : 21 ROUNDS / 63 MATCHES ===== */
 let fixtures=[
+/* R1 */
+{round:1,h:"Newcastle",a:"Marseille",hs:"",as:""},
+{round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
+{round:1,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
 
-/* ===== FIRST LEG (1–6) ===== */
-{round:1,h:"Newcastle United",a:"Marseille",hs:"",as:"",events:[]},
-{round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:1,h:"Real Madrid",a:"AC Milan",hs:"",as:"",events:[]},
+/* R2 */
+{round:2,h:"Newcastle",a:"PSG",hs:"",as:""},
+{round:2,h:"Man United",a:"Real Madrid",hs:"",as:""},
+{round:2,h:"Marseille",a:"AC Milan",hs:"",as:""},
 
-{round:2,h:"Newcastle United",a:"PSG",hs:"",as:"",events:[]},
-{round:2,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
-{round:2,h:"Marseille",a:"AC Milan",hs:"",as:"",events:[]},
+/* R3 */
+{round:3,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
+{round:3,h:"Man United",a:"AC Milan",hs:"",as:""},
+{round:3,h:"Marseille",a:"PSG",hs:"",as:""},
 
-{round:3,h:"Newcastle United",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:3,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
-{round:3,h:"Marseille",a:"PSG",hs:"",as:"",events:[]},
+/* R4 */
+{round:4,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
+{round:4,h:"Man United",a:"PSG",hs:"",as:""},
+{round:4,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:4,h:"Newcastle United",a:"Real Madrid",hs:"",as:"",events:[]},
-{round:4,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",events:[]},
-{round:4,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+/* R5 */
+{round:5,h:"Newcastle",a:"AC Milan",hs:"",as:""},
+{round:5,h:"Man United",a:"Marseille",hs:"",as:""},
+{round:5,h:"Atletico Madrid",a:"PSG",hs:"",as:""},
 
-{round:5,h:"Newcastle United",a:"Man United",hs:"",as:"",events:[]},
-{round:5,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
-{round:5,h:"PSG",a:"AC Milan",hs:"",as:"",events:[]},
+/* R6 */
+{round:6,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
+{round:6,h:"Marseille",a:"Real Madrid",hs:"",as:""},
+{round:6,h:"PSG",a:"AC Milan",hs:"",as:""},
 
-{round:6,h:"Newcastle United",a:"AC Milan",hs:"",as:"",events:[]},
-{round:6,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
-{round:6,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+/* R7 */
+{round:7,h:"Newcastle",a:"Man United",hs:"",as:""},
+{round:7,h:"Marseille",a:"Atletico Madrid",hs:"",as:""},
+{round:7,h:"PSG",a:"Real Madrid",hs:"",as:""},
 
-/* ===== SECOND LEG (7–12) ===== */
-{round:7,h:"Marseille",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:7,h:"Atletico Madrid",a:"Man United",hs:"",as:"",events:[]},
-{round:7,h:"AC Milan",a:"Real Madrid",hs:"",as:"",events:[]},
+/* R8 */
+{round:8,h:"Marseille",a:"Newcastle",hs:"",as:""},
+{round:8,h:"Atletico Madrid",a:"Man United",hs:"",as:""},
+{round:8,h:"AC Milan",a:"Real Madrid",hs:"",as:""},
 
-{round:8,h:"PSG",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:8,h:"Real Madrid",a:"Man United",hs:"",as:"",events:[]},
-{round:8,h:"AC Milan",a:"Marseille",hs:"",as:"",events:[]},
+/* R9 */
+{round:9,h:"PSG",a:"Newcastle",hs:"",as:""},
+{round:9,h:"Real Madrid",a:"Man United",hs:"",as:""},
+{round:9,h:"AC Milan",a:"Marseille",hs:"",as:""},
 
-{round:9,h:"Atletico Madrid",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:9,h:"AC Milan",a:"Man United",hs:"",as:"",events:[]},
-{round:9,h:"PSG",a:"Marseille",hs:"",as:"",events:[]},
+/* R10 */
+{round:10,h:"Atletico Madrid",a:"Newcastle",hs:"",as:""},
+{round:10,h:"AC Milan",a:"Man United",hs:"",as:""},
+{round:10,h:"PSG",a:"Marseille",hs:"",as:""},
 
-{round:10,h:"Real Madrid",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:10,h:"AC Milan",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:10,h:"PSG",a:"Man United",hs:"",as:"",events:[]},
+/* R11 */
+{round:11,h:"Real Madrid",a:"Newcastle",hs:"",as:""},
+{round:11,h:"PSG",a:"Man United",hs:"",as:""},
+{round:11,h:"AC Milan",a:"Atletico Madrid",hs:"",as:""},
 
-{round:11,h:"Man United",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:11,h:"Marseille",a:"Real Madrid",hs:"",as:"",events:[]},
-{round:11,h:"AC Milan",a:"PSG",hs:"",as:"",events:[]},
+/* R12 */
+{round:12,h:"AC Milan",a:"Newcastle",hs:"",as:""},
+{round:12,h:"Marseille",a:"Man United",hs:"",as:""},
+{round:12,h:"PSG",a:"Atletico Madrid",hs:"",as:""},
 
-{round:12,h:"AC Milan",a:"Newcastle United",hs:"",as:"",events:[]},
-{round:12,h:"PSG",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:12,h:"Marseille",a:"Man United",hs:"",as:"",events:[]},
+/* R13 */
+{round:13,h:"Real Madrid",a:"Atletico Madrid",hs:"",as:""},
+{round:13,h:"Real Madrid",a:"Marseille",hs:"",as:""},
+{round:13,h:"AC Milan",a:"PSG",hs:"",as:""},
 
-/* ===== SPECIAL ROUND (13–18) ===== */
-{round:13,h:"Newcastle United",a:"Marseille",hs:"",as:"",events:[]},
-{round:13,h:"Man United",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:13,h:"Real Madrid",a:"AC Milan",hs:"",as:"",events:[]},
+/* R14 */
+{round:14,h:"Man United",a:"Newcastle",hs:"",as:""},
+{round:14,h:"Atletico Madrid",a:"Marseille",hs:"",as:""},
+{round:14,h:"Real Madrid",a:"PSG",hs:"",as:""},
 
-{round:14,h:"Newcastle United",a:"PSG",hs:"",as:"",events:[]},
-{round:14,h:"Man United",a:"Real Madrid",hs:"",as:"",events:[]},
-{round:14,h:"Marseille",a:"AC Milan",hs:"",as:"",events:[]},
+/* R15–21 (เลกที่ 3 ซ้ำตามรอบ 1–7) */
+{round:15,h:"Newcastle",a:"Marseille",hs:"",as:""},
+{round:15,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
+{round:15,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:15,h:"Newcastle United",a:"Atletico Madrid",hs:"",as:"",events:[]},
-{round:15,h:"Man United",a:"AC Milan",hs:"",as:"",events:[]},
-{round:15,h:"Marseille",a:"PSG",hs:"",as:"",events:[]},
+{round:16,h:"Newcastle",a:"PSG",hs:"",as:""},
+{round:16,h:"Man United",a:"Real Madrid",hs:"",as:""},
+{round:16,h:"Marseille",a:"AC Milan",hs:"",as:""},
 
-{round:16,h:"Newcastle United",a:"Real Madrid",hs:"",as:"",events:[]},
-{round:16,h:"Atletico Madrid",a:"AC Milan",hs:"",as:"",events:[]},
-{round:16,h:"Man United",a:"PSG",hs:"",as:"",events:[]},
+{round:17,h:"Newcastle",a:"Atletico Madrid",hs:"",as:""},
+{round:17,h:"Man United",a:"AC Milan",hs:"",as:""},
+{round:17,h:"Marseille",a:"PSG",hs:"",as:""},
 
-{round:17,h:"Newcastle United",a:"Man United",hs:"",as:"",events:[]},
-{round:17,h:"Real Madrid",a:"Marseille",hs:"",as:"",events:[]},
-{round:17,h:"PSG",a:"AC Milan",hs:"",as:"",events:[]},
+{round:18,h:"Newcastle",a:"Real Madrid",hs:"",as:""},
+{round:18,h:"Man United",a:"PSG",hs:"",as:""},
+{round:18,h:"Atletico Madrid",a:"AC Milan",hs:"",as:""},
 
-{round:18,h:"Newcastle United",a:"AC Milan",hs:"",as:"",events:[]},
-{round:18,h:"Atletico Madrid",a:"PSG",hs:"",as:"",events:[]},
-{round:18,h:"Man United",a:"Marseille",hs:"",as:"",events:[]},
+{round:19,h:"Newcastle",a:"AC Milan",hs:"",as:""},
+{round:19,h:"Man United",a:"Marseille",hs:"",as:""},
+{round:19,h:"Atletico Madrid",a:"PSG",hs:"",as:""},
+
+{round:20,h:"Atletico Madrid",a:"Real Madrid",hs:"",as:""},
+{round:20,h:"Marseille",a:"Real Madrid",hs:"",as:""},
+{round:20,h:"PSG",a:"AC Milan",hs:"",as:""},
+
+{round:21,h:"Newcastle",a:"Man United",hs:"",as:""},
+{round:21,h:"Marseille",a:"Atletico Madrid",hs:"",as:""},
+{round:21,h:"PSG",a:"Real Madrid",hs:"",as:""}
 ];
 const perPage=6; let page=0;
 const saved=JSON.parse(localStorage.getItem("efs2"));
