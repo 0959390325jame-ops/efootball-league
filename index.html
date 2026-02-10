@@ -442,4 +442,20 @@ function resetAll(){
 }
 
 function nextPage(){
- if((page+1)*per
+ if((page+1)*perPage<fixtures.length){page++;render();}
+}
+
+function prevPage(){
+ if(page>0){page--;render();}
+}
+
+function render(){
+ renderFixtures();
+ renderTable();
+}
+
+render();
+</script>
+
+</body>
+</html>
