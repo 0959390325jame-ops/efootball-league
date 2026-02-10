@@ -115,9 +115,18 @@ td{
 
 /* FIXTURES */
 .round-title{
-  margin:16px 0 8px;
+  margin:16px 0 4px;
   font-weight:bold;
   color:var(--pl-purple);
+}
+
+.round-summary{
+  background:#fff;
+  padding:6px 10px;
+  margin-bottom:8px;
+  border-left:6px solid var(--pl-cyan);
+  border-radius:10px;
+  font-size:13px;
 }
 
 .fixture{
@@ -161,6 +170,17 @@ td{
 
 .controls button:hover{
   background:var(--pl-pink);
+}
+
+/* HIGHLIGHT */
+tr.champion{
+  background:#E6FFF6;
+  border-left:6px solid #00FFB6;
+}
+
+tr.relegation{
+  background:#FFECEC;
+  border-left:6px solid #FF2882;
 }
 </style>
 </head>
@@ -217,8 +237,8 @@ const teams=[
  {name:"AC Milan",logo:"https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg"}
 ];
 
-/* FIXTURES 21 ROUNDS */
-let fixtures = [
+/* FIXTURES 21 ROUNDS (ORIGINAL FULL) */
+let fixtures = JSON.parse(localStorage.getItem("efs2")) || [
 {round:1,h:"Newcastle",a:"Marseille",hs:"",as:""},
 {round:1,h:"Man United",a:"Atletico Madrid",hs:"",as:""},
 {round:1,h:"Real Madrid",a:"AC Milan",hs:"",as:""},
@@ -321,25 +341,34 @@ function showPage(id){
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
- let lastRound=null;
+ let rounds={};
 
- fixtures.slice(page*perPage,page*perPage+perPage).forEach((m,i)=>{
-  const idx=page*perPage+i;
-  if(m.round!==lastRound){
-   box.innerHTML+=`<div class="round-title">Round ${m.round}</div>`;
-   lastRound=m.round;
-  }
+ fixtures.slice(page*perPage,page*perPage+perPage).forEach(m=>{
+  rounds[m.round]=rounds[m.round]||[];
+  rounds[m.round].push(m);
+ });
+
+ Object.keys(rounds).forEach(r=>{
+  let matches=rounds[r];
+  let played=matches.filter(m=>m.hs!==""&&m.as!=="").length;
   box.innerHTML+=`
-  <div class="fixture">
-   <div class="match-row">
-    <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-    <div class="score">
+   <div class="round-title">Round ${r} (${matches.length} matches)</div>
+   <div class="round-summary">Played ${played}/${matches.length}</div>
+  `;
+  matches.forEach(m=>{
+   const idx=fixtures.indexOf(m);
+   box.innerHTML+=`
+   <div class="fixture">
+    <div class="match-row">
+     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+     <div class="score">
       <input type="number" min="0" value="${m.hs}" onchange="setScore(${idx},'hs',this.value)"> -
       <input type="number" min="0" value="${m.as}" onchange="setScore(${idx},'as',this.value)">
+     </div>
+     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
     </div>
-    <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
-   </div>
-  </div>`;
+   </div>`;
+  });
  });
 }
 
@@ -353,16 +382,8 @@ function getLast5Form(team){
  fixtures.forEach(m=>{
   if(m.hs!=="" && m.as!==""){
    let hs=+m.hs, as=+m.as;
-   if(m.h===team){
-    if(hs>as) res.push("W");
-    else if(hs<as) res.push("L");
-    else res.push("D");
-   }
-   if(m.a===team){
-    if(as>hs) res.push("W");
-    else if(as<hs) res.push("L");
-    else res.push("D");
-   }
+   if(m.h===team) res.push(hs>as?"W":hs<as?"L":"D");
+   if(m.a===team) res.push(as>hs?"W":as<hs?"L":"D");
   }
  });
  return res.slice(-5);
@@ -382,13 +403,17 @@ function renderTable(){
    else{h.D++;a.D++;}
   }
  });
+
  let arr=Object.keys(s).map(n=>({...s[n],name:n,GD:s[n].GF-s[n].GA,Pts:s[n].W*3+s[n].D}))
  .sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD);
 
  tableBody.innerHTML=arr.map((t,i)=>{
+  let rowClass="";
+  if(i===0) rowClass="champion";
+  if(i>=arr.length-3) rowClass="relegation";
   let form=getLast5Form(t.name).map(r=>`<span class="f ${r}">${r}</span>`).join("");
   return `
-  <tr>
+  <tr class="${rowClass}">
    <td>${i+1}</td>
    <td class="team"><img src="${getLogo(t.name)}">${t.name}</td>
    <td>${t.P}</td>
@@ -417,20 +442,4 @@ function resetAll(){
 }
 
 function nextPage(){
- if((page+1)*perPage<fixtures.length){page++;render();}
-}
-
-function prevPage(){
- if(page>0){page--;render();}
-}
-
-function render(){
- renderFixtures();
- renderTable();
-}
-
-render();
-</script>
-
-</body>
-</html>
+ if((page+1)*per
