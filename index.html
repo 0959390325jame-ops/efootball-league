@@ -39,7 +39,6 @@ th{background:var(--pl-purple);color:#fff;}
 .D{background:#f1c40f;}
 .L{background:#e74c3c;}
 
-/* แชมป์ / ตกชั้น */
 .champion{background:#d4edda;font-weight:bold;}
 .relegation{background:#f8d7da;font-weight:bold;}
 
@@ -186,12 +185,16 @@ let fixtures=[
 {round:21,h:"PSG",a:"Real Madrid",hs:"",as:""}
 ];
 
-/* ===== PAGINATION : 2 ROUNDS / PAGE ===== */
+/* ===== PAGINATION ===== */
 const roundsPerPage=2;
 let page=0;
 
 const saved=JSON.parse(localStorage.getItem("efs2"));
 if(saved)fixtures=saved;
+
+function getRounds(){
+  return [...new Set(fixtures.map(f=>f.round))].sort((a,b)=>a-b);
+}
 
 function getLogo(n){return teams.find(t=>t.name===n)?.logo||"";}
 
@@ -204,30 +207,33 @@ function showPage(id){
 function renderFixtures(){
  const box=document.getElementById("fixtureList");
  box.innerHTML="";
- const rounds=[...new Set(fixtures.map(f=>f.round))];
+
+ const rounds=getRounds();
  const show=rounds.slice(page*roundsPerPage,page*roundsPerPage+roundsPerPage);
 
- fixtures.forEach((m,i)=>{
-  if(show.includes(m.round)){
-   if(!box.querySelector(`[data-r='${m.round}']`)){
-     box.innerHTML+=`<div class="round-title" data-r="${m.round}">Round ${m.round}</div>`;
-   }
-   box.innerHTML+=`
-   <div class="fixture">
-    <div class="match-row">
-     <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
-     <div class="score">
-      <input type="number" min="0" value="${m.hs}" onchange="setScore(${i},'hs',this.value)"> -
-      <input type="number" min="0" value="${m.as}" onchange="setScore(${i},'as',this.value)">
-     </div>
-     <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
-    </div>
-   </div>`;
-  }
+ show.forEach(r=>{
+  box.innerHTML+=`<div class="round-title">Round ${r}</div>`;
+  fixtures.filter(m=>m.round===r).forEach(m=>{
+    const i=fixtures.indexOf(m);
+    box.innerHTML+=`
+    <div class="fixture">
+      <div class="match-row">
+        <div class="team"><img src="${getLogo(m.h)}">${m.h}</div>
+        <div class="score">
+          <input type="number" min="0" value="${m.hs}" onchange="setScore(${i},'hs',this.value)"> -
+          <input type="number" min="0" value="${m.as}" onchange="setScore(${i},'as',this.value)">
+        </div>
+        <div class="team">${m.a}<img src="${getLogo(m.a)}"></div>
+      </div>
+    </div>`;
+  });
  });
 }
 
-function setScore(i,k,v){fixtures[i][k]=v;renderTable();}
+function setScore(i,k,v){
+ fixtures[i][k]=v;
+ renderTable();
+}
 
 function renderTable(){
  let s={};
@@ -264,12 +270,19 @@ function saveResults(){
  localStorage.setItem("efs2",JSON.stringify(fixtures));
  alert("Saved");
 }
+
 function nextPage(){
- const max=Math.ceil([...new Set(fixtures.map(f=>f.round))].length/roundsPerPage);
+ const max=Math.ceil(getRounds().length/roundsPerPage);
  if(page<max-1){page++;render();}
 }
-function prevPage(){if(page>0){page--;render();}}
-function render(){renderFixtures();renderTable();}
+function prevPage(){
+ if(page>0){page--;render();}
+}
+
+function render(){
+ renderFixtures();
+ renderTable();
+}
 render();
 </script>
 
